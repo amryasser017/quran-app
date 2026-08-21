@@ -1,0 +1,144 @@
+.admin-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.admin-form {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 32px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.admin-form h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.admin-form input,
+.admin-panel input,
+.admin-panel select {
+    padding: 12px 14px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.admin-form input:focus,
+.admin-panel input:focus,
+.admin-panel select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.admin-form button,
+.admin-panel button {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: #0c1330;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.admin-form button:disabled,
+.admin-panel button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.admin-form button:hover:not(:disabled),
+.admin-panel button:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.admin-error {
+    color: #f28b82;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.admin-msg {
+    color: var(--accent-blue);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.admin-dashboard {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.admin-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.admin-top h1 {
+    color: #ffffff;
+    font-size: 1.6rem;
+}
+
+.logout-btn {
+    padding: 8px 18px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-btn:hover {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.admin-panels {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.admin-panel {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-panel h2 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+@media (max-width: 767px) {
+    .admin-panels {
+        grid-template-columns: 1fr;
+    }
+    .admin-form {
+        padding: 30px 22px;
+    }
+}

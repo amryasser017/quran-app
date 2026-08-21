@@ -1,0 +1,38 @@
+.reciter-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.reciter-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    border-color: var(--accent-blue);
+}
+
+.reciter-card h3 {
+    margin-top: 14px;
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+@media (max-width: 767px) {
+    .reciter-card {
+        padding: 18px 12px;
+    }
+    .reciter-card:hover {
+        transform: scale(1.02);
+    }
+    .reciter-card h3 {
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+}
