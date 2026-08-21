@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
-import { collection, addDoc, getDocs, orderBy, query, serverTimestamp } from 'firebase/firestore'
+import {
+    collection, addDoc, getDocs, deleteDoc, updateDoc, doc,
+    orderBy, query, where, serverTimestamp
+} from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import './Admin.css'
 
@@ -9,16 +12,33 @@ function AdminDashboard() {
     const navigate = useNavigate()
 
     const [reciters, setReciters] = useState([])
+    const [allClips, setAllClips] = useState([])
+
+    // Add Reciter form
     const [reciterName, setReciterName] = useState('')
     const [reciterImageUrl, setReciterImageUrl] = useState('')
     const [reciterSaving, setReciterSaving] = useState(false)
     const [reciterMsg, setReciterMsg] = useState('')
 
+    // Add Clip form
     const [clipReciterId, setClipReciterId] = useState('')
     const [clipTitle, setClipTitle] = useState('')
     const [clipAudioUrl, setClipAudioUrl] = useState('')
     const [clipSaving, setClipSaving] = useState(false)
     const [clipMsg, setClipMsg] = useState('')
+
+    // Manage section — which reciter's clips are expanded
+    const [expandedReciterId, setExpandedReciterId] = useState(null)
+
+    // Editing a reciter inline
+    const [editingReciterId, setEditingReciterId] = useState(null)
+    const [editReciterName, setEditReciterName] = useState('')
+    const [editReciterImageUrl, setEditReciterImageUrl] = useState('')
+
+    // Editing a clip inline
+    const [editingClipId, setEditingClipId] = useState(null)
+    const [editClipTitle, setEditClipTitle] = useState('')
+    const [editClipAudioUrl, setEditClipAudioUrl] = useState('')
 
     async function loadReciters() {
         const q = query(collection(db, 'shortClipReciters'), orderBy('name'))
@@ -26,10 +46,21 @@ function AdminDashboard() {
         setReciters(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
     }
 
+    async function loadAllClips() {
+        const snapshot = await getDocs(collection(db, 'clips'))
+        setAllClips(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    }
+
     useEffect(() => {
         loadReciters()
+        loadAllClips()
     }, [])
 
+    function clipsForReciter(reciterId) {
+        return allClips.filter(c => c.reciterId === reciterId)
+    }
+
+    // ---------- Add Reciter ----------
     async function handleAddReciter(e) {
         e.preventDefault()
         if (!reciterName.trim()) return
@@ -51,6 +82,7 @@ function AdminDashboard() {
         setReciterSaving(false)
     }
 
+    // ---------- Add Clip ----------
     async function handleAddClip(e) {
         e.preventDefault()
         if (!clipReciterId || !clipTitle.trim() || !clipAudioUrl.trim()) return
@@ -66,10 +98,80 @@ function AdminDashboard() {
             setClipTitle('')
             setClipAudioUrl('')
             setClipMsg('Clip added.')
+            loadAllClips()
         } catch (err) {
             setClipMsg('Failed to add clip: ' + err.message)
         }
         setClipSaving(false)
+    }
+
+    // ---------- Edit Reciter ----------
+    function startEditReciter(reciter) {
+        setEditingReciterId(reciter.id)
+        setEditReciterName(reciter.name)
+        setEditReciterImageUrl(reciter.imageUrl || '')
+    }
+
+    function cancelEditReciter() {
+        setEditingReciterId(null)
+    }
+
+    async function saveEditReciter(reciterId) {
+        if (!editReciterName.trim()) return
+        await updateDoc(doc(db, 'shortClipReciters', reciterId), {
+            name: editReciterName.trim(),
+            imageUrl: editReciterImageUrl.trim()
+        })
+        setEditingReciterId(null)
+        loadReciters()
+    }
+
+    // ---------- Delete Reciter (cascades to their clips) ----------
+    async function handleDeleteReciter(reciter) {
+        const clipCount = clipsForReciter(reciter.id).length
+        const confirmMsg = clipCount > 0
+            ? `Delete "${reciter.name}" and all ${clipCount} of their clip(s)? This cannot be undone.`
+            : `Delete "${reciter.name}"? This cannot be undone.`
+        if (!confirm(confirmMsg)) return
+
+        // Delete every clip belonging to this reciter first
+        const clipsToDelete = clipsForReciter(reciter.id)
+        for (const clip of clipsToDelete) {
+            await deleteDoc(doc(db, 'clips', clip.id))
+        }
+        // Then delete the reciter itself
+        await deleteDoc(doc(db, 'shortClipReciters', reciter.id))
+
+        loadReciters()
+        loadAllClips()
+    }
+
+    // ---------- Edit Clip ----------
+    function startEditClip(clip) {
+        setEditingClipId(clip.id)
+        setEditClipTitle(clip.title)
+        setEditClipAudioUrl(clip.audioUrl)
+    }
+
+    function cancelEditClip() {
+        setEditingClipId(null)
+    }
+
+    async function saveEditClip(clipId) {
+        if (!editClipTitle.trim() || !editClipAudioUrl.trim()) return
+        await updateDoc(doc(db, 'clips', clipId), {
+            title: editClipTitle.trim(),
+            audioUrl: editClipAudioUrl.trim()
+        })
+        setEditingClipId(null)
+        loadAllClips()
+    }
+
+    // ---------- Delete Clip ----------
+    async function handleDeleteClip(clip) {
+        if (!confirm(`Delete the clip "${clip.title}"? This cannot be undone.`)) return
+        await deleteDoc(doc(db, 'clips', clip.id))
+        loadAllClips()
     }
 
     async function handleLogout() {
@@ -140,6 +242,103 @@ function AdminDashboard() {
                     )}
                     {clipMsg && <p className="admin-msg">{clipMsg}</p>}
                 </form>
+            </div>
+
+            <div className="admin-manage">
+                <h2>Manage Reciters &amp; Clips</h2>
+
+                {reciters.length === 0 ? (
+                    <p className="admin-msg">No reciters yet.</p>
+                ) : (
+                    reciters.map(reciter => {
+                        const isEditing = editingReciterId === reciter.id
+                        const isExpanded = expandedReciterId === reciter.id
+                        const clips = clipsForReciter(reciter.id)
+
+                        return (
+                            <div key={reciter.id} className="manage-reciter">
+                                {isEditing ? (
+                                    <div className="manage-edit-row">
+                                        <input
+                                            type="text"
+                                            value={editReciterName}
+                                            onChange={(e) => setEditReciterName(e.target.value)}
+                                            placeholder="Name"
+                                        />
+                                        <input
+                                            type="url"
+                                            value={editReciterImageUrl}
+                                            onChange={(e) => setEditReciterImageUrl(e.target.value)}
+                                            placeholder="Image URL"
+                                        />
+                                        <div className="manage-btn-row">
+                                            <button className="save-btn" onClick={() => saveEditReciter(reciter.id)}>Save</button>
+                                            <button className="cancel-btn" onClick={cancelEditReciter}>Cancel</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="manage-row">
+                                        <button
+                                            className="manage-name-btn"
+                                            onClick={() => setExpandedReciterId(isExpanded ? null : reciter.id)}
+                                        >
+                                            {isExpanded ? '▾' : '▸'} {reciter.name}
+                                            <span className="manage-clip-count"> ({clips.length} clip{clips.length !== 1 ? 's' : ''})</span>
+                                        </button>
+                                        <div className="manage-btn-row">
+                                            <button className="edit-btn" onClick={() => startEditReciter(reciter)}>Edit</button>
+                                            <button className="delete-btn" onClick={() => handleDeleteReciter(reciter)}>Delete</button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {isExpanded && (
+                                    <div className="manage-clips">
+                                        {clips.length === 0 ? (
+                                            <p className="admin-msg">No clips for this reciter yet.</p>
+                                        ) : (
+                                            clips.map(clip => {
+                                                const isClipEditing = editingClipId === clip.id
+                                                return (
+                                                    <div key={clip.id} className="manage-clip-row">
+                                                        {isClipEditing ? (
+                                                            <div className="manage-edit-row">
+                                                                <input
+                                                                    type="text"
+                                                                    value={editClipTitle}
+                                                                    onChange={(e) => setEditClipTitle(e.target.value)}
+                                                                    placeholder="Title"
+                                                                />
+                                                                <input
+                                                                    type="url"
+                                                                    value={editClipAudioUrl}
+                                                                    onChange={(e) => setEditClipAudioUrl(e.target.value)}
+                                                                    placeholder="Audio URL"
+                                                                />
+                                                                <div className="manage-btn-row">
+                                                                    <button className="save-btn" onClick={() => saveEditClip(clip.id)}>Save</button>
+                                                                    <button className="cancel-btn" onClick={cancelEditClip}>Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <>
+                                                                <span className="manage-clip-title">{clip.title}</span>
+                                                                <div className="manage-btn-row">
+                                                                    <button className="edit-btn" onClick={() => startEditClip(clip)}>Edit</button>
+                                                                    <button className="delete-btn" onClick={() => handleDeleteClip(clip)}>Delete</button>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                )
+                                            })
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })
+                )}
             </div>
         </section>
     )
