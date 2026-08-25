@@ -2,10 +2,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Landing from './pages/Landing'
 import Home from './pages/Home'
 import ReciterPage from './pages/ReciterPage'
+import FullSowarCustomReciterPage from './pages/FullSowarCustomReciterPage'
 import ShortClipsHome from './pages/ShortClipsHome'
 import ShortClipReciterPage from './pages/ShortClipReciterPage'
 import AdminLogin from './pages/AdminLogin'
-import AdminDashboard from './pages/AdminDashboard'
+import AdminHome from './pages/AdminHome'
+import AdminFullSowar from './pages/AdminFullSowar'
+import AdminShortParts from './pages/AdminShortParts'
 import ProtectedRoute from './components/ProtectedRoute'
 import './App.css'
 
@@ -17,6 +20,7 @@ function App() {
 
                 <Route path="/full-sowar" element={<Home />} />
                 <Route path="/full-sowar/reciter/:id" element={<ReciterPage />} />
+                <Route path="/full-sowar/custom/:id" element={<FullSowarCustomReciterPage />} />
 
                 <Route path="/short-clips" element={<ShortClipsHome />} />
                 <Route path="/short-clips/reciter/:id" element={<ShortClipReciterPage />} />
@@ -26,10 +30,27 @@ function App() {
                     path="/admin"
                     element={
                         <ProtectedRoute>
-                            <AdminDashboard />
+                            <AdminHome />
                         </ProtectedRoute>
                     }
                 />
+                <Route
+                    path="/admin/full-sowar"
+                    element={
+                        <ProtectedRoute>
+                            <AdminFullSowar />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/short-parts"
+                    element={
+                        <ProtectedRoute>
+                            <AdminShortParts />
+                        </ProtectedRoute>
+                    }
+                />
+
                 <Route path="*" element={<p className="status-text">Page not found.</p>} />
             </Routes>
         </BrowserRouter>
