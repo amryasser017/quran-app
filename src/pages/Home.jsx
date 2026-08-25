@@ -1,26 +1,44 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { collection, getDocs, orderBy, query } from 'firebase/firestore'
 import { getReciters } from '../api'
+import { db } from '../firebase'
 import ReciterCard from '../components/ReciterCard'
+import Avatar from '../components/Avatar'
 import './Home.css'
 
 function Home() {
-    const [reciters, setReciters] = useState([])
+    const [apiReciters, setApiReciters] = useState([])
+    const [customReciters, setCustomReciters] = useState([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
-        getReciters().then(data => {
-            setReciters(data)
+        async function load() {
+            const apiData = await getReciters()
+            setApiReciters(apiData)
             setLoading(false)
-        })
+
+            try {
+                const customSnap = await getDocs(query(collection(db, 'fullSowarReciters'), orderBy('name')))
+                setCustomReciters(customSnap.docs.map(d => ({ id: d.id, ...d.data() })))
+            } catch (err) {
+                console.error('Could not load custom reciters:', err)
+            }
+        }
+        load()
     }, [])
 
-    const filteredReciters = reciters.filter(reciter =>
+    const filteredApi = apiReciters.filter(reciter =>
+        reciter.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    )
+    const filteredCustom = customReciters.filter(reciter =>
         reciter.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
     )
 
     if (loading) return <p className="status-text">Loading reciters...</p>
+
+    const totalResults = filteredApi.length + filteredCustom.length
 
     return (
         <section className="home">
@@ -36,13 +54,19 @@ function Home() {
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
 
-            {filteredReciters.length === 0 ? (
+            {totalResults === 0 ? (
                 <p className="status-text">No reciters match "{searchTerm}".</p>
             ) : (
                 <div className="reciters-grid">
-                    {filteredReciters.map(reciter => (
+                    {filteredCustom.map(reciter => (
+                        <Link key={`custom-${reciter.id}`} to={`/full-sowar/custom/${reciter.id}`} className="reciter-card">
+                            <Avatar src={reciter.imageUrl} name={reciter.name} />
+                            <h3>{reciter.name}</h3>
+                        </Link>
+                    ))}
+                    {filteredApi.map(reciter => (
                         <ReciterCard
-                            key={reciter.id}
+                            key={`api-${reciter.id}`}
                             reciter={reciter}
                             linkTo={`/full-sowar/reciter/${reciter.id}`}
                         />
