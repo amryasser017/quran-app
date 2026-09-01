@@ -1,7 +1,7 @@
 .reciter-page {
     max-width: 1000px;
     margin: 0 auto;
-    padding: 60px 20px;
+    padding: 60px 20px 110px;
     animation: fade-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -103,13 +103,6 @@
 
 .play-btn:hover::after {
     opacity: 1;
-}
-
-.audio-player {
-    width: 100%;
-    margin-top: 6px;
-    border-radius: 10px;
-    accent-color: var(--accent-purple);
 }
 
 @media (max-width: 1024px) {

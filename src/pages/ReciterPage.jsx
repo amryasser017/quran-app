@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { getReciters, getSurahNames, buildAudioUrl } from '../api'
 import { db } from '../firebase'
 import ReciterAvatar from '../components/ReciterAvatar'
+import PlayerBar from '../components/PlayerBar'
+import usePlaylistPlayer from '../hooks/usePlaylistPlayer'
 import './ReciterPage.css'
 
 function ReciterPage() {
@@ -11,7 +13,6 @@ function ReciterPage() {
     const [reciter, setReciter] = useState(null)
     const [surahNames, setSurahNames] = useState([])
     const [extraSurahs, setExtraSurahs] = useState([])
-    const [nowPlaying, setNowPlaying] = useState(null)
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
 
@@ -40,39 +41,45 @@ function ReciterPage() {
         load()
     }, [id])
 
+    const moshaf = reciter && reciter.moshaf && reciter.moshaf[0]
+
+    const allSurahs = useMemo(() => {
+        if (!moshaf) return []
+
+        const surahIds = moshaf.surah_list.split(',').filter(Boolean).map(Number)
+
+        const apiSurahs = surahIds.map(surahNum => {
+            const surahInfo = surahNames.find(s => s.id === surahNum)
+            return {
+                key: `api-${surahNum}`,
+                title: surahInfo ? surahInfo.name.trim() : `Surah ${surahNum}`,
+                number: surahNum,
+                audioUrl: buildAudioUrl(moshaf.server, surahNum),
+                isExtra: false
+            }
+        })
+
+        const adminSurahs = extraSurahs
+            .filter(s => s && s.surahName && s.audioUrl)
+            .map(s => ({
+                key: `extra-${s.id}`,
+                title: s.surahName,
+                number: null,
+                audioUrl: s.audioUrl,
+                isExtra: true
+            }))
+
+        return [...adminSurahs, ...apiSurahs].map((s, i) => ({ ...s, index: i }))
+    }, [moshaf, surahNames, extraSurahs])
+
+    const player = usePlaylistPlayer(allSurahs)
+
     if (loading) return <p className="status-text">Loading...</p>
     if (!reciter) return <p className="status-text">Reciter not found.</p>
-
-    const moshaf = reciter.moshaf && reciter.moshaf[0]
     if (!moshaf) return <p className="status-text">No recitation data available for this reciter.</p>
 
-    const surahIds = moshaf.surah_list.split(',').filter(Boolean).map(Number)
-
-    const apiSurahs = surahIds.map(surahNum => {
-        const surahInfo = surahNames.find(s => s.id === surahNum)
-        return {
-            key: `api-${surahNum}`,
-            name: surahInfo ? surahInfo.name.trim() : `Surah ${surahNum}`,
-            number: surahNum,
-            audioUrl: buildAudioUrl(moshaf.server, surahNum),
-            isExtra: false
-        }
-    })
-
-    const adminSurahs = extraSurahs
-        .filter(s => s && s.surahName && s.audioUrl)
-        .map(s => ({
-            key: `extra-${s.id}`,
-            name: s.surahName,
-            number: null,
-            audioUrl: s.audioUrl,
-            isExtra: true
-        }))
-
-    const allSurahs = [...adminSurahs, ...apiSurahs]
-
     const filteredSurahs = allSurahs.filter(surah =>
-        surah.name.toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
+        surah.title.toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
         (surah.number !== null && String(surah.number).includes(searchTerm.trim()))
     )
 
@@ -101,32 +108,25 @@ function ReciterPage() {
             ) : (
                 <div className="surah-grid">
                     {filteredSurahs.map(surah => {
-                        const isPlaying = nowPlaying === surah.key
+                        const isCurrent = player.currentIndex === surah.index
 
                         return (
-                            <div key={surah.key} className={`surah-card ${isPlaying ? 'playing' : ''}`}>
+                            <div key={surah.key} className={`surah-card ${isCurrent ? 'playing' : ''}`}>
                                 {surah.number !== null && <span className="surah-number">{surah.number}</span>}
-                                <span className="surah-name">{surah.name}</span>
+                                <span className="surah-name">{surah.title}</span>
                                 <button
                                     className="play-btn"
-                                    onClick={() => setNowPlaying(isPlaying ? null : surah.key)}
+                                    onClick={() => isCurrent ? player.togglePlayPause() : player.play(surah.index)}
                                 >
-                                    {isPlaying ? '⏸ Pause' : '▶ Play'}
+                                    {isCurrent && player.isPlaying ? '⏸ Pause' : '▶ Play'}
                                 </button>
-                                {isPlaying && (
-                                    <audio
-                                        src={surah.audioUrl}
-                                        autoPlay
-                                        controls
-                                        onEnded={() => setNowPlaying(null)}
-                                        className="audio-player"
-                                    />
-                                )}
                             </div>
                         )
                     })}
                 </div>
             )}
+
+            <PlayerBar player={player} subtitle={reciter.name} />
         </section>
     )
 }
