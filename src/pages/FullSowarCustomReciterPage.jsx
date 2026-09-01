@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../firebase'
 import Avatar from '../components/Avatar'
+import PlayerBar from '../components/PlayerBar'
+import usePlaylistPlayer from '../hooks/usePlaylistPlayer'
 import './ShortClips.css'
 
 function FullSowarCustomReciterPage() {
@@ -10,7 +12,6 @@ function FullSowarCustomReciterPage() {
     const [reciter, setReciter] = useState(null)
     const [surahs, setSurahs] = useState([])
     const [loading, setLoading] = useState(true)
-    const [nowPlaying, setNowPlaying] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
@@ -32,11 +33,18 @@ function FullSowarCustomReciterPage() {
         load()
     }, [id])
 
+    const tracks = useMemo(
+        () => surahs.map((s, i) => ({ key: s.id, title: s.surahName, audioUrl: s.audioUrl, index: i })),
+        [surahs]
+    )
+
+    const player = usePlaylistPlayer(tracks)
+
     if (loading) return <p className="status-text">Loading...</p>
     if (!reciter) return <p className="status-text">Reciter not found.</p>
 
-    const filteredSurahs = surahs.filter(s =>
-        s.surahName.toLowerCase().includes(searchTerm.trim().toLowerCase())
+    const filteredSurahs = tracks.filter(s =>
+        s.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
     )
 
     return (
@@ -63,30 +71,23 @@ function FullSowarCustomReciterPage() {
             ) : (
                 <div className="surah-grid">
                     {filteredSurahs.map(surah => {
-                        const isPlaying = nowPlaying === surah.id
+                        const isCurrent = player.currentIndex === surah.index
                         return (
-                            <div key={surah.id} className={`surah-card ${isPlaying ? 'playing' : ''}`}>
-                                <span className="surah-name">{surah.surahName}</span>
+                            <div key={surah.key} className={`surah-card ${isCurrent ? 'playing' : ''}`}>
+                                <span className="surah-name">{surah.title}</span>
                                 <button
                                     className="play-btn"
-                                    onClick={() => setNowPlaying(isPlaying ? null : surah.id)}
+                                    onClick={() => isCurrent ? player.togglePlayPause() : player.play(surah.index)}
                                 >
-                                    {isPlaying ? '⏸ Pause' : '▶ Play'}
+                                    {isCurrent && player.isPlaying ? '⏸ Pause' : '▶ Play'}
                                 </button>
-                                {isPlaying && (
-                                    <audio
-                                        src={surah.audioUrl}
-                                        autoPlay
-                                        controls
-                                        onEnded={() => setNowPlaying(null)}
-                                        className="audio-player"
-                                    />
-                                )}
                             </div>
                         )
                     })}
                 </div>
             )}
+
+            <PlayerBar player={player} subtitle={reciter.name} />
         </section>
     )
 }
