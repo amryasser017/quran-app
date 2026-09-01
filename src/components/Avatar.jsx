@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './Avatar.css'
 
 function Avatar({ src, name, size = 90 }) {
     const [imgFailed, setImgFailed] = useState(!src)

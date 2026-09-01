@@ -1,18 +1,25 @@
 .avatar-image {
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--accent-blue);
+    border: 2px solid transparent;
+    background: linear-gradient(var(--bg-blue), var(--bg-blue)) padding-box,
+                var(--grad-primary) border-box;
+    box-shadow: 0 4px 18px rgba(96, 165, 250, 0.35);
     flex-shrink: 0;
 }
 
 .avatar-fallback {
     border-radius: 50%;
-    background-color: var(--surface);
-    border: 2px solid var(--accent-purple);
+    border: 2px solid transparent;
+    background:
+        linear-gradient(var(--bg-blue), var(--bg-blue)) padding-box,
+        var(--grad-primary) border-box;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    background-clip: padding-box, border-box;
     color: var(--accent-purple);
+    box-shadow: 0 4px 18px rgba(167, 139, 250, 0.3);
     flex-shrink: 0;
 }
