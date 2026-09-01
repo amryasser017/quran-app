@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import './PlayerBar.css'
 
 const iconProps = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'currentColor' }
@@ -71,7 +72,7 @@ function PlayerBar({ player, subtitle }) {
 
     const pct = duration > 0 ? (progress / duration) * 100 : 0
 
-    return (
+    return createPortal(
         <div className="player-bar">
             <audio
                 ref={audioRef}
@@ -120,7 +121,8 @@ function PlayerBar({ player, subtitle }) {
                     <button className="player-close-btn" onClick={stop} aria-label="Close player"><CloseIcon /></button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }
 
