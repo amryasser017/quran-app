@@ -4,7 +4,7 @@ function Landing() {
     return (
         <section className="landing">
             <h1 className="landing-title">Quran</h1>
-            <p className="landing-subtitle">Choose how you want to listen</p>
+            <p className="landing-subtitle">Listen to the Quran, and never miss a prayer</p>
 
             <div className="landing-cards">
                 <Link to="/full-sowar" className="landing-card">
@@ -17,6 +17,12 @@ function Landing() {
                     <span className="landing-card-icon">✨</span>
                     <h2>Short Parts</h2>
                     <p>Short, chosen highlights — a specific ayah or moment from a recitation.</p>
+                </Link>
+
+                <Link to="/prayer-times" className="landing-card">
+                    <span className="landing-card-icon">🕌</span>
+                    <h2>Prayer Times</h2>
+                    <p>Accurate prayer times for any city — auto-detected or searched.</p>
                 </Link>
             </div>
         </section>
