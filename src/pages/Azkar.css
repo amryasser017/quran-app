@@ -216,10 +216,8 @@
     opacity: 0.5;
 }
 
-.azkar-card.active {
-    background: rgba(167, 139, 250, 0.1);
-    border-color: rgba(167, 139, 250, 0.55);
-    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12), 0 14px 32px rgba(0, 0, 0, 0.4);
+.azkar-card.listen {
+    cursor: default;
 }
 
 .azkar-text {
