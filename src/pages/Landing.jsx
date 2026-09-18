@@ -24,6 +24,18 @@ function Landing() {
                     <h2>Prayer Times</h2>
                     <p>Accurate prayer times for any city — auto-detected or searched.</p>
                 </Link>
+
+                <Link to="/azkar" className="landing-card">
+                    <span className="landing-card-icon">📿</span>
+                    <h2>Azkar Al-Sabah wa Al-Masaa</h2>
+                    <p>Morning and evening remembrances — read or listen, in Arabic.</p>
+                </Link>
+
+                <Link to="/events" className="landing-card">
+                    <span className="landing-card-icon">🌙</span>
+                    <h2>Events</h2>
+                    <p>Countdown to Ramadan, Eid, Mawlid, and the Islamic New Year.</p>
+                </Link>
             </div>
         </section>
     )

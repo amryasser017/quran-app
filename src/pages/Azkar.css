@@ -1,0 +1,278 @@
+.azkar-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    animation: fade-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.azkar-hub-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px;
+    margin-top: 20px;
+}
+
+.azkar-hub-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--surface);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow-elev), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    padding: 48px 28px;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.azkar-hub-card::before {
+    content: '';
+    position: absolute;
+    inset: -40% -40% auto auto;
+    width: 60%;
+    height: 60%;
+    background: var(--grad-primary);
+    filter: blur(55px);
+    opacity: 0.18;
+    border-radius: 50%;
+    transition: opacity 0.35s ease;
+}
+
+.azkar-hub-card:hover {
+    transform: translateY(-8px) scale(1.015);
+    border-color: rgba(167, 139, 250, 0.4);
+    box-shadow: 0 20px 46px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.azkar-hub-card:hover::before {
+    opacity: 0.32;
+}
+
+.azkar-hub-card-icon {
+    font-size: 2.8rem;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 6px 18px rgba(124, 105, 240, 0.5));
+}
+
+.azkar-hub-card h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.azkar-hub-card p {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.azkar-toggle {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 28px 0 20px;
+}
+
+.azkar-toggle button {
+    padding: 10px 22px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.azkar-toggle button.active {
+    background: var(--grad-primary);
+    border-color: transparent;
+    color: #05050c;
+}
+
+.azkar-reset-btn {
+    display: block;
+    margin: 0 auto 30px;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.azkar-reset-btn:hover {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.azkar-error {
+    max-width: 600px;
+    margin: 0 auto 24px;
+    color: #fca5a5;
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.azkar-listen-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.azkar-listen-play {
+    padding: 13px 40px;
+    border: none;
+    border-radius: 26px;
+    background: var(--grad-primary);
+    color: #05050c;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(124, 105, 240, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.azkar-listen-play:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(124, 105, 240, 0.5);
+}
+
+.azkar-listen-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.azkar-listen-controls button {
+    padding: 8px 18px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--surface-hover);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.25s ease, opacity 0.25s ease;
+}
+
+.azkar-listen-controls button:hover:not(:disabled) {
+    border-color: var(--accent-blue);
+}
+
+.azkar-listen-controls button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.azkar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.azkar-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    background: var(--surface);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    text-align: right;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+}
+
+.azkar-card:hover {
+    border-color: rgba(96, 165, 250, 0.35);
+}
+
+.azkar-card.done {
+    opacity: 0.5;
+}
+
+.azkar-card.active {
+    background: rgba(167, 139, 250, 0.1);
+    border-color: rgba(167, 139, 250, 0.55);
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12), 0 14px 32px rgba(0, 0, 0, 0.4);
+}
+
+.azkar-text {
+    font-size: 1.15rem;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.azkar-reference {
+    font-size: 0.85rem;
+    color: var(--accent-blue);
+    margin-bottom: 8px;
+}
+
+.azkar-count-badge {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent-purple);
+    background: rgba(167, 139, 250, 0.12);
+    padding: 4px 14px;
+    border-radius: 12px;
+}
+
+.azkar-card.done .azkar-count-badge {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.12);
+}
+
+@media (max-width: 767px) {
+    .azkar-page {
+        padding: 40px 16px 60px;
+    }
+    .azkar-hub-cards {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .azkar-hub-card {
+        padding: 36px 22px;
+    }
+    .azkar-toggle {
+        flex-wrap: wrap;
+    }
+    .azkar-toggle button {
+        flex: 1;
+        min-width: 130px;
+    }
+    .azkar-text {
+        font-size: 1.05rem;
+    }
+    .azkar-listen-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
