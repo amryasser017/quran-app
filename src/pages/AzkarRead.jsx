@@ -66,6 +66,7 @@ function AzkarRead() {
                         >
                             <p className="azkar-text">{item.text}</p>
                             {item.reference && <p className="azkar-reference">{item.reference}</p>}
+                            {item.benefit && <p className="azkar-benefit">{item.benefit}</p>}
                             <span className="azkar-count-badge">
                                 {done ? '✓ تم' : `متبقي ${left} من ${item.count}`}
                             </span>
