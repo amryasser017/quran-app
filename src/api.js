@@ -1,6 +1,8 @@
 const API_BASE = "https://www.mp3quran.net/api/v3"
 const PRAYER_API_BASE = "https://api.aladhan.com/v1"
 const GEOCODE_API_BASE = "https://api.bigdatacloud.net/data/reverse-geocode-client"
+const ARCHIVE_METADATA_BASE = "https://archive.org/metadata"
+const ARCHIVE_DOWNLOAD_BASE = "https://archive.org/download"
 const PRAYER_METHOD = 3 // Muslim World League
 
 export async function getReciters() {
@@ -105,4 +107,20 @@ export async function hijriToGregorian(day, month, year) {
     if (!g?.date) throw new Error('Could not convert that Hijri date.')
     const [gd, gm, gy] = g.date.split('-').map(Number)
     return new Date(gy, gm - 1, gd)
+}
+
+// Looks up an Internet Archive item's real file listing at runtime (official,
+// documented Metadata API) rather than hardcoding a guessed download URL.
+export async function getArchiveAudioFiles(identifier) {
+    const res = await fetch(`${ARCHIVE_METADATA_BASE}/${identifier}`)
+    if (!res.ok) throw new Error('Could not load the audio collection.')
+    const json = await res.json()
+    const files = json?.files || []
+    return files
+        .filter(f => f.name && /\.mp3$/i.test(f.name) && (f.format || '').toLowerCase().includes('mp3'))
+        .map(f => ({
+            name: f.name,
+            title: f.title || '',
+            url: `${ARCHIVE_DOWNLOAD_BASE}/${identifier}/${encodeURIComponent(f.name)}`
+        }))
 }
