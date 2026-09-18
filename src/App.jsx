@@ -6,6 +6,10 @@ import FullSowarCustomReciterPage from './pages/FullSowarCustomReciterPage'
 import ShortClipsHome from './pages/ShortClipsHome'
 import ShortClipReciterPage from './pages/ShortClipReciterPage'
 import PrayerTimes from './pages/PrayerTimes'
+import Azkar from './pages/Azkar'
+import AzkarRead from './pages/AzkarRead'
+import AzkarListen from './pages/AzkarListen'
+import Events from './pages/Events'
 import AdminLogin from './pages/AdminLogin'
 import AdminHome from './pages/AdminHome'
 import AdminFullSowar from './pages/AdminFullSowar'
@@ -27,6 +31,12 @@ function App() {
                 <Route path="/short-clips/reciter/:id" element={<ShortClipReciterPage />} />
 
                 <Route path="/prayer-times" element={<PrayerTimes />} />
+
+                <Route path="/azkar" element={<Azkar />} />
+                <Route path="/azkar/read" element={<AzkarRead />} />
+                <Route path="/azkar/listen" element={<AzkarListen />} />
+
+                <Route path="/events" element={<Events />} />
 
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route

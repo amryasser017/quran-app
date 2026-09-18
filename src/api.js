@@ -81,3 +81,28 @@ export async function reverseGeocode(latitude, longitude) {
         return null
     }
 }
+
+export async function getCurrentHijriDate() {
+    const today = new Date()
+    const dd = String(today.getDate()).padStart(2, '0')
+    const mm = String(today.getMonth() + 1).padStart(2, '0')
+    const yyyy = today.getFullYear()
+    const res = await fetch(`${PRAYER_API_BASE}/gToH/${dd}-${mm}-${yyyy}`)
+    if (!res.ok) throw new Error("Could not fetch today's Hijri date.")
+    const json = await res.json()
+    const h = json?.data?.hijri
+    if (!h) throw new Error("Could not fetch today's Hijri date.")
+    return { day: Number(h.day), month: Number(h.month.number), year: Number(h.year) }
+}
+
+export async function hijriToGregorian(day, month, year) {
+    const dd = String(day).padStart(2, '0')
+    const mm = String(month).padStart(2, '0')
+    const res = await fetch(`${PRAYER_API_BASE}/hToG/${dd}-${mm}-${year}`)
+    if (!res.ok) throw new Error('Could not convert that Hijri date.')
+    const json = await res.json()
+    const g = json?.data?.gregorian
+    if (!g?.date) throw new Error('Could not convert that Hijri date.')
+    const [gd, gm, gy] = g.date.split('-').map(Number)
+    return new Date(gy, gm - 1, gd)
+}
