@@ -1,9 +1,10 @@
+import { getMethodForCountry } from './data/prayerMethods'
+
 const API_BASE = "https://www.mp3quran.net/api/v3"
 const PRAYER_API_BASE = "https://api.aladhan.com/v1"
 const GEOCODE_API_BASE = "https://api.bigdatacloud.net/data/reverse-geocode-client"
 const ARCHIVE_METADATA_BASE = "https://archive.org/metadata"
 const ARCHIVE_DOWNLOAD_BASE = "https://archive.org/download"
-const PRAYER_METHOD = 3 // Muslim World League
 
 export async function getReciters() {
     const res = await fetch(`${API_BASE}/reciters?language=eng`)
@@ -48,18 +49,20 @@ function parsePrayerResponse(json) {
 }
 
 export async function getPrayerTimesByCity(city, country) {
-    const params = new URLSearchParams({ city, method: String(PRAYER_METHOD) })
+    const method = getMethodForCountry(country)
+    const params = new URLSearchParams({ city, method: String(method) })
     if (country) params.set('country', country)
     const res = await fetch(`${PRAYER_API_BASE}/timingsByCity?${params.toString()}`)
     if (!res.ok) throw new Error('Could not find prayer times for that city. Try adding the country, e.g. "Cairo, Egypt".')
     return parsePrayerResponse(await res.json())
 }
 
-export async function getPrayerTimesByCoords(latitude, longitude) {
+export async function getPrayerTimesByCoords(latitude, longitude, country) {
+    const method = getMethodForCountry(country)
     const params = new URLSearchParams({
         latitude: String(latitude),
         longitude: String(longitude),
-        method: String(PRAYER_METHOD)
+        method: String(method)
     })
     const res = await fetch(`${PRAYER_API_BASE}/timings?${params.toString()}`)
     if (!res.ok) throw new Error('Could not fetch prayer times for your location.')
