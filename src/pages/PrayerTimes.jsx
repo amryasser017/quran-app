@@ -105,7 +105,7 @@ function PrayerTimes() {
         if (!saved) return
         setLoading(true)
         const fetchPromise = saved.mode === 'coords'
-            ? getPrayerTimesByCoords(saved.latitude, saved.longitude)
+            ? getPrayerTimesByCoords(saved.latitude, saved.longitude, saved.country)
             : getPrayerTimesByCity(saved.city, saved.country)
 
         fetchPromise
@@ -152,12 +152,10 @@ function PrayerTimes() {
             async (pos) => {
                 const { latitude, longitude } = pos.coords
                 try {
-                    const [data, place] = await Promise.all([
-                        getPrayerTimesByCoords(latitude, longitude),
-                        reverseGeocode(latitude, longitude)
-                    ])
+                    const place = await reverseGeocode(latitude, longitude)
                     const cityName = place?.city || 'Your location'
                     const countryName = place?.country || ''
+                    const data = await getPrayerTimesByCoords(latitude, longitude, countryName)
                     setPrayerData(data)
                     setCity(cityName)
                     setCountry(countryName)
