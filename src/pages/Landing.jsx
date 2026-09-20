@@ -39,7 +39,7 @@ function Landing() {
 
                 <Link to="/asmaa-allah" className="landing-card">
                     <span className="landing-card-icon">🕋</span>
-                    <h2>أسماء الله الحسنى</h2>
+                    <h2>99 Names of Allah</h2>
                     <p>The 99 Names of Allah, each with its meaning.</p>
                 </Link>
             </div>
