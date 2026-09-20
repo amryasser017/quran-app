@@ -1,0 +1,105 @@
+.asmaa-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px 80px;
+    animation: fade-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.asmaa-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+}
+
+.asmaa-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--surface);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-elev), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    padding: 24px 18px;
+    gap: 8px;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.asmaa-card::before {
+    content: '';
+    position: absolute;
+    inset: -50% -50% auto auto;
+    width: 70%;
+    height: 70%;
+    background: var(--grad-primary);
+    filter: blur(50px);
+    opacity: 0.14;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.asmaa-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: rgba(96, 165, 250, 0.4);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+}
+
+.asmaa-id {
+    position: relative;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: rgba(167, 139, 250, 0.12);
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.asmaa-card h2 {
+    position: relative;
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: var(--grad-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.3;
+}
+
+.asmaa-meaning {
+    position: relative;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+    .asmaa-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .asmaa-page {
+        padding: 40px 16px 60px;
+    }
+    .asmaa-grid {
+        gap: 14px;
+    }
+    .asmaa-card h2 {
+        font-size: 1.2rem;
+    }
+    .asmaa-meaning {
+        font-size: 0.82rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .asmaa-grid {
+        grid-template-columns: 1fr;
+    }
+}
