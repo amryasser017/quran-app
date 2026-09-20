@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getPrayerTimesByCity, getPrayerTimesByCoords, reverseGeocode } from '../api'
 import cities from '../data/cities'
-import QiblaCompass from '../components/QiblaCompass'
 import './PrayerTimes.css'
 
 const STORAGE_KEY = 'prayerLocation'
@@ -273,8 +272,6 @@ function PrayerTimes() {
                             )
                         })}
                     </div>
-
-                    <QiblaCompass />
                 </div>
             )}
         </section>
