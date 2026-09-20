@@ -6,7 +6,7 @@ function Asmaa_Allah_El_hosnah() {
     return (
         <section className="asmaa-page">
             <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">الله</h1>
+            <h1 className="page-title">99 Names of Allah</h1>
             <p className="page-subtitle" dir="rtl">اسماء الله الحسني</p>
 
             <div className="asmaa-grid">
