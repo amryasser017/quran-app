@@ -15,11 +15,9 @@
     gap: 14px;
     padding: 12px 16px calc(10px + env(safe-area-inset-top));
     padding-top: max(12px, env(safe-area-inset-top));
-    background: rgba(10, 12, 26, 0.85);
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
+    background: #17181c;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.92rem;
     color: var(--text);
     z-index: 2;
 }
@@ -42,10 +40,8 @@
 .mushaf-pagenum {
     margin-inline-start: auto;
     font-weight: 700;
+    font-size: 1.05rem;
     color: #ffffff;
-    background: rgba(167, 139, 250, 0.15);
-    padding: 3px 12px;
-    border-radius: 12px;
     font-variant-numeric: tabular-nums;
 }
 
@@ -77,6 +73,7 @@
 }
 
 .mushaf-viewer {
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
@@ -85,6 +82,19 @@
     touch-action: none;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
+}
+
+.mushaf-ribbon {
+    position: absolute;
+    top: 0;
+    right: 12%;
+    width: 20px;
+    height: 130px;
+    background: linear-gradient(180deg, #e8a0a0 0%, #d97f7f 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.9;
 }
 
 .mushaf-image {
@@ -115,43 +125,72 @@
     cursor: pointer;
 }
 
+.mushaf-hizb-badge {
+    position: relative;
+    align-self: center;
+    margin-bottom: -1px;
+    padding: 5px 16px;
+    background: #23242a;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 10px 10px 0 0;
+    z-index: 1;
+    direction: rtl;
+}
+
 .mushaf-bottombar {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 10px 14px calc(12px + env(safe-area-inset-bottom));
-    background: rgba(10, 12, 26, 0.85);
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    border-top: 1px solid var(--border);
+    padding: 0 0 env(safe-area-inset-bottom);
+    background: #17181c;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 2;
 }
 
 .mushaf-toolbar-row {
     display: flex;
-    gap: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mushaf-toolbar-row:last-child {
+    border-bottom: none;
 }
 
 .mushaf-toolbar-row button {
     flex: 1;
-    padding: 11px 6px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--surface);
+    display: flex;
+    direction: rtl;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 13px 4px;
+    border: none;
+    border-inline-start: 1px solid rgba(255, 255, 255, 0.08);
+    background: none;
     color: var(--text);
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.mushaf-toolbar-row button:first-child {
+    border-inline-start: none;
+}
+
+.mushaf-toolbar-row button svg {
+    flex-shrink: 0;
+    color: var(--accent-blue);
 }
 
 .mushaf-toolbar-row button:hover:not(:disabled) {
-    border-color: rgba(96, 165, 250, 0.4);
-    background: var(--surface-hover);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .mushaf-toolbar-row button:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
