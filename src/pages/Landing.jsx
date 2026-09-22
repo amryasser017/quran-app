@@ -7,6 +7,12 @@ function Landing() {
             <p className="landing-subtitle">استمع إلى القرآن الكريم، ولا تفوّت صلاة أبدًا</p>
 
             <div className="landing-cards">
+                <Link to="/mushaf" className="landing-card">
+                    <span className="landing-card-icon">📜</span>
+                    <h2>المصحف</h2>
+                    <p>صفحات المصحف الشريف كاملة، مع الفهرس والأجزاء وحفظ علامتك.</p>
+                </Link>
+
                 <Link to="/full-sowar" className="landing-card">
                     <span className="landing-card-icon">📖</span>
                     <h2>السور كاملة</h2>
