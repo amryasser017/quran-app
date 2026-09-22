@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
     }, [])
 
     if (user === undefined) {
-        return <p className="status-text">Checking login...</p>
+        return <p className="status-text">جارِ التحقق من تسجيل الدخول...</p>
     }
 
     if (!user) {

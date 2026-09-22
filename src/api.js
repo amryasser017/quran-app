@@ -7,13 +7,13 @@ const ARCHIVE_METADATA_BASE = "https://archive.org/metadata"
 const ARCHIVE_DOWNLOAD_BASE = "https://archive.org/download"
 
 export async function getReciters() {
-    const res = await fetch(`${API_BASE}/reciters?language=eng`)
+    const res = await fetch(`${API_BASE}/reciters?language=ar`)
     const data = await res.json()
     return data.reciters
 }
 
 export async function getSurahNames() {
-    const res = await fetch(`${API_BASE}/suwar`)
+    const res = await fetch(`${API_BASE}/suwar?language=ar`)
     const data = await res.json()
     return data.suwar
 }
@@ -28,11 +28,18 @@ function cleanTime(t) {
     return t ? t.split(' ')[0] : t
 }
 
+const GREGORIAN_MONTHS_AR = [
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+]
+
 function parsePrayerResponse(json) {
     if (!json || json.code !== 200 || !json.data) {
-        throw new Error('Could not find prayer times for that location.')
+        throw new Error('تعذر العثور على مواقيت الصلاة لهذا الموقع.')
     }
     const { timings, date, meta } = json.data
+    const g = date?.gregorian
+    const h = date?.hijri
     return {
         timings: {
             Fajr: cleanTime(timings.Fajr),
@@ -42,8 +49,8 @@ function parsePrayerResponse(json) {
             Maghrib: cleanTime(timings.Maghrib),
             Isha: cleanTime(timings.Isha)
         },
-        gregorian: date?.readable || '',
-        hijri: date?.hijri ? `${date.hijri.day} ${date.hijri.month?.en || ''} ${date.hijri.year} AH` : '',
+        gregorian: g ? `${g.day} ${GREGORIAN_MONTHS_AR[g.month.number - 1]} ${g.year}` : '',
+        hijri: h ? `${h.day} ${h.month?.ar || h.month?.en || ''} ${h.year} هـ` : '',
         timezone: meta?.timezone || ''
     }
 }
@@ -53,7 +60,7 @@ export async function getPrayerTimesByCity(city, country) {
     const params = new URLSearchParams({ city, method: String(method) })
     if (country) params.set('country', country)
     const res = await fetch(`${PRAYER_API_BASE}/timingsByCity?${params.toString()}`)
-    if (!res.ok) throw new Error('Could not find prayer times for that city. Try adding the country, e.g. "Cairo, Egypt".')
+    if (!res.ok) throw new Error('تعذر العثور على مواقيت الصلاة لهذه المدينة. جرّب إضافة اسم الدولة، مثل "القاهرة، مصر".')
     return parsePrayerResponse(await res.json())
 }
 
@@ -65,7 +72,7 @@ export async function getPrayerTimesByCoords(latitude, longitude, country) {
         method: String(method)
     })
     const res = await fetch(`${PRAYER_API_BASE}/timings?${params.toString()}`)
-    if (!res.ok) throw new Error('Could not fetch prayer times for your location.')
+    if (!res.ok) throw new Error('تعذر جلب مواقيت الصلاة لموقعك.')
     return parsePrayerResponse(await res.json())
 }
 
@@ -93,10 +100,10 @@ export async function getCurrentHijriDate() {
     const mm = String(today.getMonth() + 1).padStart(2, '0')
     const yyyy = today.getFullYear()
     const res = await fetch(`${PRAYER_API_BASE}/gToH/${dd}-${mm}-${yyyy}`)
-    if (!res.ok) throw new Error("Could not fetch today's Hijri date.")
+    if (!res.ok) throw new Error('تعذر جلب تاريخ اليوم الهجري.')
     const json = await res.json()
     const h = json?.data?.hijri
-    if (!h) throw new Error("Could not fetch today's Hijri date.")
+    if (!h) throw new Error('تعذر جلب تاريخ اليوم الهجري.')
     return { day: Number(h.day), month: Number(h.month.number), year: Number(h.year) }
 }
 
@@ -104,10 +111,10 @@ export async function hijriToGregorian(day, month, year) {
     const dd = String(day).padStart(2, '0')
     const mm = String(month).padStart(2, '0')
     const res = await fetch(`${PRAYER_API_BASE}/hToG/${dd}-${mm}-${year}`)
-    if (!res.ok) throw new Error('Could not convert that Hijri date.')
+    if (!res.ok) throw new Error('تعذر تحويل هذا التاريخ الهجري.')
     const json = await res.json()
     const g = json?.data?.gregorian
-    if (!g?.date) throw new Error('Could not convert that Hijri date.')
+    if (!g?.date) throw new Error('تعذر تحويل هذا التاريخ الهجري.')
     const [gd, gm, gy] = g.date.split('-').map(Number)
     return new Date(gy, gm - 1, gd)
 }
@@ -116,7 +123,7 @@ export async function hijriToGregorian(day, month, year) {
 // documented Metadata API) rather than hardcoding a guessed download URL.
 export async function getArchiveAudioFiles(identifier) {
     const res = await fetch(`${ARCHIVE_METADATA_BASE}/${identifier}`)
-    if (!res.ok) throw new Error('Could not load the audio collection.')
+    if (!res.ok) throw new Error('تعذر تحميل مجموعة الملفات الصوتية.')
     const json = await res.json()
     const files = json?.files || []
     return files

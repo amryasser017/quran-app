@@ -39,12 +39,12 @@ function ShortClipReciterPage() {
 
     const player = usePlaylistPlayer(tracks)
 
-    if (loading) return <p className="status-text">Loading...</p>
-    if (!reciter) return <p className="status-text">Reciter not found.</p>
+    if (loading) return <p className="status-text">جارِ التحميل...</p>
+    if (!reciter) return <p className="status-text">القارئ غير موجود.</p>
 
     return (
         <section className="reciter-page">
-            <Link to="/short-clips" className="back-link">&larr; Back to Short Parts</Link>
+            <Link to="/short-clips" className="back-link">&rarr; رجوع إلى مقاطع مختارة</Link>
 
             <div className="reciter-header">
                 <Avatar src={reciter.imageUrl} name={reciter.name} />
@@ -54,7 +54,7 @@ function ShortClipReciterPage() {
             </div>
 
             {tracks.length === 0 ? (
-                <p className="status-text">No clips added for this reciter yet.</p>
+                <p className="status-text">لم تتم إضافة أي مقاطع لهذا القارئ بعد.</p>
             ) : (
                 <div className="surah-grid">
                     {tracks.map(clip => {
@@ -66,7 +66,7 @@ function ShortClipReciterPage() {
                                     className="play-btn"
                                     onClick={() => isCurrent ? player.togglePlayPause() : player.play(clip.index)}
                                 >
-                                    {isCurrent && player.isPlaying ? '⏸ Pause' : '▶ Play'}
+                                    {isCurrent && player.isPlaying ? '⏸ إيقاف' : '▶ تشغيل'}
                                 </button>
                             </div>
                         )

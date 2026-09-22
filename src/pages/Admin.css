@@ -311,13 +311,13 @@
     font-weight: 700;
     color: #ffffff;
     margin-bottom: 4px;
-    padding-left: 14px;
+    padding-right: 14px;
 }
 
 .admin-panel h2::before {
     content: '';
     position: absolute;
-    left: 0;
+    right: 0;
     top: 2px;
     bottom: 2px;
     width: 4px;
@@ -373,7 +373,7 @@
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    text-align: left;
+    text-align: right;
     padding: 0;
     flex: 1;
     transition: color 0.2s ease;

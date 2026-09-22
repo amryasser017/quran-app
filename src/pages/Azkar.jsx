@@ -4,7 +4,7 @@ import './Azkar.css'
 function Azkar() {
     return (
         <section className="azkar-page" dir="rtl">
-            <Link to="/" className="back-link">رجوع</Link>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
             <h1 className="page-title">أذكار الصباح والمساء</h1>
             <p className="page-subtitle">اختر كيف تريد الذكر</p>
 

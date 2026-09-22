@@ -32,7 +32,7 @@ body {
     background: linear-gradient(165deg, var(--bg-black) 0%, var(--bg-blue) 48%, var(--bg-purple) 100%);
     background-attachment: fixed;
     color: var(--text);
-    font-family: 'Segoe UI', -apple-system, sans-serif;
+    font-family: 'Cairo', 'Segoe UI', -apple-system, sans-serif;
 }
 
 body::before {
@@ -108,7 +108,7 @@ body::before {
     width: 100%;
     max-width: 420px;
     margin: 0 auto 40px;
-    padding: 13px 20px 13px 46px;
+    padding: 13px 46px 13px 20px;
     background-color: var(--surface);
     backdrop-filter: blur(14px) saturate(150%);
     -webkit-backdrop-filter: blur(14px) saturate(150%);
@@ -117,9 +117,10 @@ body::before {
     color: var(--text);
     font-size: 1rem;
     font-family: inherit;
+    text-align: right;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2398a0c3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: 18px center;
+    background-position: right 18px center;
     transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 

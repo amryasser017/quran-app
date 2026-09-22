@@ -66,10 +66,10 @@ function AdminShortParts() {
             })
             setReciterName('')
             setReciterImageUrl('')
-            setReciterMsg('Reciter added.')
+            setReciterMsg('تمت إضافة القارئ.')
             loadReciters()
         } catch (err) {
-            setReciterMsg('Failed to add reciter: ' + err.message)
+            setReciterMsg('فشلت إضافة القارئ: ' + err.message)
         }
         setReciterSaving(false)
     }
@@ -88,10 +88,10 @@ function AdminShortParts() {
             })
             setClipTitle('')
             setClipAudioUrl('')
-            setClipMsg('Clip added.')
+            setClipMsg('تمت إضافة المقطع.')
             loadAllClips()
         } catch (err) {
-            setClipMsg('Failed to add clip: ' + err.message)
+            setClipMsg('فشلت إضافة المقطع: ' + err.message)
         }
         setClipSaving(false)
     }
@@ -119,8 +119,8 @@ function AdminShortParts() {
     async function handleDeleteReciter(reciter) {
         const clipCount = clipsForReciter(reciter.id).length
         const confirmMsg = clipCount > 0
-            ? `Delete "${reciter.name}" and all ${clipCount} of their clip(s)? This cannot be undone.`
-            : `Delete "${reciter.name}"? This cannot be undone.`
+            ? `حذف "${reciter.name}" وجميع مقاطعه (${clipCount})؟ لا يمكن التراجع عن هذا.`
+            : `حذف "${reciter.name}"؟ لا يمكن التراجع عن هذا.`
         if (!confirm(confirmMsg)) return
 
         const clipsToDelete = clipsForReciter(reciter.id)
@@ -154,7 +154,7 @@ function AdminShortParts() {
     }
 
     async function handleDeleteClip(clip) {
-        if (!confirm(`Delete the clip "${clip.title}"? This cannot be undone.`)) return
+        if (!confirm(`حذف المقطع "${clip.title}"؟ لا يمكن التراجع عن هذا.`)) return
         await deleteDoc(doc(db, 'clips', clip.id))
         loadAllClips()
     }
@@ -168,75 +168,75 @@ function AdminShortParts() {
         <section className="admin-dashboard">
             <div className="admin-top">
                 <div>
-                    <Link to="/admin" className="back-link">&larr; Back to Admin</Link>
-                    <h1>Control Short Parts</h1>
+                    <Link to="/admin" className="back-link">&rarr; رجوع إلى الإدارة</Link>
+                    <h1>إدارة المقاطع المختارة</h1>
                 </div>
-                <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+                <button className="logout-btn" onClick={handleLogout}>تسجيل الخروج</button>
             </div>
 
             <div className="admin-panels">
                 <form className="admin-panel" onSubmit={handleAddReciter}>
-                    <h2>Add Short-Clip Reciter</h2>
+                    <h2>إضافة قارئ للمقاطع المختارة</h2>
                     <input
                         type="text"
-                        placeholder="Reciter name"
+                        placeholder="اسم القارئ"
                         value={reciterName}
                         onChange={(e) => setReciterName(e.target.value)}
                         required
                     />
                     <input
                         type="url"
-                        placeholder="Image URL (optional — leave blank for a letter avatar)"
+                        placeholder="رابط الصورة (اختياري — اتركه فارغًا لصورة بحرف)"
                         value={reciterImageUrl}
                         onChange={(e) => setReciterImageUrl(e.target.value)}
                     />
                     <button type="submit" disabled={reciterSaving}>
-                        {reciterSaving ? 'Adding...' : 'Add Reciter'}
+                        {reciterSaving ? 'جارِ الإضافة...' : 'إضافة القارئ'}
                     </button>
                     {reciterMsg && <p className="admin-msg">{reciterMsg}</p>}
                 </form>
 
                 <form className="admin-panel" onSubmit={handleAddClip}>
-                    <h2>Add Clip</h2>
+                    <h2>إضافة مقطع</h2>
                     <select
                         value={clipReciterId}
                         onChange={(e) => setClipReciterId(e.target.value)}
                         required
                     >
-                        <option value="">Select a reciter...</option>
+                        <option value="">اختر قارئًا...</option>
                         {reciters.map(r => (
                             <option key={r.id} value={r.id}>{r.name}</option>
                         ))}
                     </select>
                     <input
                         type="text"
-                        placeholder="Title (e.g. Al-Ahzab, Ayah 35)"
+                        placeholder="العنوان (مثال: الأحزاب، آية 35)"
                         value={clipTitle}
                         onChange={(e) => setClipTitle(e.target.value)}
                         required
                     />
                     <input
                         type="url"
-                        placeholder="Audio URL"
+                        placeholder="رابط الملف الصوتي"
                         value={clipAudioUrl}
                         onChange={(e) => setClipAudioUrl(e.target.value)}
                         required
                     />
                     <button type="submit" disabled={clipSaving || reciters.length === 0}>
-                        {clipSaving ? 'Adding...' : 'Add Clip'}
+                        {clipSaving ? 'جارِ الإضافة...' : 'إضافة المقطع'}
                     </button>
                     {reciters.length === 0 && (
-                        <p className="admin-msg">Add a reciter first before adding clips.</p>
+                        <p className="admin-msg">أضف قارئًا أولاً قبل إضافة المقاطع.</p>
                     )}
                     {clipMsg && <p className="admin-msg">{clipMsg}</p>}
                 </form>
             </div>
 
             <div className="admin-manage">
-                <h2>Manage Reciters &amp; Clips</h2>
+                <h2>إدارة القراء والمقاطع</h2>
 
                 {reciters.length === 0 ? (
-                    <p className="admin-msg">No reciters yet.</p>
+                    <p className="admin-msg">لا يوجد قراء بعد.</p>
                 ) : (
                     reciters.map(reciter => {
                         const isEditing = editingReciterId === reciter.id
@@ -251,17 +251,17 @@ function AdminShortParts() {
                                             type="text"
                                             value={editReciterName}
                                             onChange={(e) => setEditReciterName(e.target.value)}
-                                            placeholder="Name"
+                                            placeholder="الاسم"
                                         />
                                         <input
                                             type="url"
                                             value={editReciterImageUrl}
                                             onChange={(e) => setEditReciterImageUrl(e.target.value)}
-                                            placeholder="Image URL"
+                                            placeholder="رابط الصورة"
                                         />
                                         <div className="manage-btn-row">
-                                            <button className="save-btn" onClick={() => saveEditReciter(reciter.id)}>Save</button>
-                                            <button className="cancel-btn" onClick={cancelEditReciter}>Cancel</button>
+                                            <button className="save-btn" onClick={() => saveEditReciter(reciter.id)}>حفظ</button>
+                                            <button className="cancel-btn" onClick={cancelEditReciter}>إلغاء</button>
                                         </div>
                                     </div>
                                 ) : (
@@ -271,11 +271,11 @@ function AdminShortParts() {
                                             onClick={() => setExpandedReciterId(isExpanded ? null : reciter.id)}
                                         >
                                             {isExpanded ? '▾' : '▸'} {reciter.name}
-                                            <span className="manage-clip-count"> ({clips.length} clip{clips.length !== 1 ? 's' : ''})</span>
+                                            <span className="manage-clip-count"> ({clips.length} مقطع)</span>
                                         </button>
                                         <div className="manage-btn-row">
-                                            <button className="edit-btn" onClick={() => startEditReciter(reciter)}>Edit</button>
-                                            <button className="delete-btn" onClick={() => handleDeleteReciter(reciter)}>Delete</button>
+                                            <button className="edit-btn" onClick={() => startEditReciter(reciter)}>تعديل</button>
+                                            <button className="delete-btn" onClick={() => handleDeleteReciter(reciter)}>حذف</button>
                                         </div>
                                     </div>
                                 )}
@@ -283,7 +283,7 @@ function AdminShortParts() {
                                 {isExpanded && (
                                     <div className="manage-clips">
                                         {clips.length === 0 ? (
-                                            <p className="admin-msg">No clips for this reciter yet.</p>
+                                            <p className="admin-msg">لا توجد مقاطع لهذا القارئ بعد.</p>
                                         ) : (
                                             clips.map(clip => {
                                                 const isClipEditing = editingClipId === clip.id
@@ -295,25 +295,25 @@ function AdminShortParts() {
                                                                     type="text"
                                                                     value={editClipTitle}
                                                                     onChange={(e) => setEditClipTitle(e.target.value)}
-                                                                    placeholder="Title"
+                                                                    placeholder="العنوان"
                                                                 />
                                                                 <input
                                                                     type="url"
                                                                     value={editClipAudioUrl}
                                                                     onChange={(e) => setEditClipAudioUrl(e.target.value)}
-                                                                    placeholder="Audio URL"
+                                                                    placeholder="رابط الملف الصوتي"
                                                                 />
                                                                 <div className="manage-btn-row">
-                                                                    <button className="save-btn" onClick={() => saveEditClip(clip.id)}>Save</button>
-                                                                    <button className="cancel-btn" onClick={cancelEditClip}>Cancel</button>
+                                                                    <button className="save-btn" onClick={() => saveEditClip(clip.id)}>حفظ</button>
+                                                                    <button className="cancel-btn" onClick={cancelEditClip}>إلغاء</button>
                                                                 </div>
                                                             </div>
                                                         ) : (
                                                             <>
                                                                 <span className="manage-clip-title">{clip.title}</span>
                                                                 <div className="manage-btn-row">
-                                                                    <button className="edit-btn" onClick={() => startEditClip(clip)}>Edit</button>
-                                                                    <button className="delete-btn" onClick={() => handleDeleteClip(clip)}>Delete</button>
+                                                                    <button className="edit-btn" onClick={() => startEditClip(clip)}>تعديل</button>
+                                                                    <button className="delete-btn" onClick={() => handleDeleteClip(clip)}>حذف</button>
                                                                 </div>
                                                             </>
                                                         )}

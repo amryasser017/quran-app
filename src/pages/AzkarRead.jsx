@@ -33,7 +33,7 @@ function AzkarRead() {
 
     return (
         <section className="azkar-page" dir="rtl">
-            <Link to="/azkar" className="back-link">رجوع</Link>
+            <Link to="/azkar" className="back-link">&rarr; رجوع</Link>
             <h1 className="page-title">اقرأ الأذكار</h1>
             <p className="page-subtitle">اضغط على الذكر لتسجيل كل مرة تقرأه</p>
 

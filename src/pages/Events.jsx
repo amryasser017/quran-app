@@ -41,20 +41,20 @@ function Events() {
 
     return (
         <section className="events-page">
-            <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">Events</h1>
-            <p className="page-subtitle" dir="rtl">المناسبات الإسلامية القادمة</p>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
+            <h1 className="page-title">المناسبات</h1>
+            <p className="page-subtitle">المناسبات الإسلامية القادمة</p>
 
-            {error && <p className="events-error" dir="rtl">{error}</p>}
-            {!results && !error && <p className="status-text" dir="rtl">جارِ الحساب...</p>}
+            {error && <p className="events-error">{error}</p>}
+            {!results && !error && <p className="status-text">جارِ الحساب...</p>}
 
             {results && (
                 <div className="events-grid">
                     {results.map(evt => (
                         <div key={evt.id} className="event-card">
-                            <h2 dir="rtl">{evt.nameAr}</h2>
+                            <h2>{evt.nameAr}</h2>
                             <p className="event-days">{evt.daysLeft}</p>
-                            <span className="event-days-label" dir="rtl">يوم متبقي</span>
+                            <span className="event-days-label">يوم متبقي</span>
                         </div>
                     ))}
                 </div>

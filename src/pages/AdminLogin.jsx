@@ -19,7 +19,7 @@ function AdminLogin() {
             await signInWithEmailAndPassword(auth, email, password)
             navigate('/admin')
         } catch (err) {
-            setError('Incorrect email or password.')
+            setError('البريد الإلكتروني أو كلمة المرور غير صحيحة.')
         }
         setLoading(false)
     }
@@ -27,24 +27,24 @@ function AdminLogin() {
     return (
         <section className="admin-login">
             <form className="admin-form" onSubmit={handleSubmit}>
-                <h1>Admin Login</h1>
+                <h1>تسجيل دخول الإدارة</h1>
                 <input
                     type="email"
-                    placeholder="Email"
+                    placeholder="البريد الإلكتروني"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
                 <input
                     type="password"
-                    placeholder="Password"
+                    placeholder="كلمة المرور"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
                 {error && <p className="admin-error">{error}</p>}
                 <button type="submit" disabled={loading}>
-                    {loading ? 'Logging in...' : 'Log In'}
+                    {loading ? 'جارِ تسجيل الدخول...' : 'تسجيل الدخول'}
                 </button>
             </form>
         </section>
