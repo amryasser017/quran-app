@@ -6,7 +6,9 @@ import khatmDua from '../data/khatmDua'
 import './Mushaf.css'
 
 const TOTAL_PAGES = 604
-const IMAGE_BASE = 'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/light'
+// Dark theme (white text on a dark page) reads far more comfortably than a
+// bright white page against this app's midnight UI, especially at night.
+const IMAGE_BASE = 'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/dark'
 const LAST_PAGE_KEY = 'mushafLastPage'
 const BOOKMARK_KEY = 'mushafBookmark'
 const TAP_THRESHOLD = 8
@@ -21,6 +23,18 @@ const PANEL_TITLES = {
 
 function pageImageUrl(page) {
     return `${IMAGE_BASE}/p${page}.png`
+}
+
+function FullscreenIcon({ active }) {
+    return active ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4M15 3h4a2 2 0 0 1 2 2v4M9 21H5a2 2 0 0 1-2-2v-4M15 21h4a2 2 0 0 0 2-2v-4" />
+        </svg>
+    ) : (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 9V5a2 2 0 0 1 2-2h4M21 9V5a2 2 0 0 0-2-2h-4M3 15v4a2 2 0 0 0 2 2h4M21 15v4a2 2 0 0 1-2 2h-4" />
+        </svg>
+    )
 }
 
 function findForPage(list, page) {
@@ -50,7 +64,24 @@ function Mushaf() {
     const [savedFlash, setSavedFlash] = useState(false)
     const [imgError, setImgError] = useState(false)
     const [pageInput, setPageInput] = useState('')
+    const [isFullscreen, setIsFullscreen] = useState(false)
     const pointerStart = useRef(null)
+
+    useEffect(() => {
+        function handleFullscreenChange() {
+            setIsFullscreen(Boolean(document.fullscreenElement))
+        }
+        document.addEventListener('fullscreenchange', handleFullscreenChange)
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }, [])
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen?.().catch(() => {})
+        } else {
+            document.exitFullscreen?.().catch(() => {})
+        }
+    }
 
     const surah = useMemo(() => findForPage(mushafSurahPages, page), [page])
     const juz = useMemo(() => findForPage(mushafJuzPages, page), [page])
@@ -79,8 +110,8 @@ function Mushaf() {
     useEffect(() => {
         function handleKey(e) {
             if (panel) return
-            if (e.key === 'ArrowLeft') next()
-            else if (e.key === 'ArrowRight') prev()
+            if (e.key === 'ArrowRight') next()
+            else if (e.key === 'ArrowLeft') prev()
         }
         window.addEventListener('keydown', handleKey)
         return () => window.removeEventListener('keydown', handleKey)
@@ -97,7 +128,7 @@ function Mushaf() {
         const dx = e.clientX - start.x
         const dy = e.clientY - start.y
         if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
-            if (dx < 0) next()
+            if (dx > 0) next()
             else prev()
         } else if (Math.abs(dx) < TAP_THRESHOLD && Math.abs(dy) < TAP_THRESHOLD) {
             setShowOverlay(o => !o)
@@ -139,6 +170,14 @@ function Mushaf() {
                     <span className="mushaf-juz">{juz.nameAr}</span>
                     <span className="mushaf-pagenum">{page}</span>
                     <span className="mushaf-surah">سورة {surah.nameAr}</span>
+                    <button
+                        className="mushaf-fullscreen-btn"
+                        onClick={toggleFullscreen}
+                        aria-label={isFullscreen ? 'إنهاء ملء الشاشة' : 'ملء الشاشة'}
+                        title={isFullscreen ? 'إنهاء ملء الشاشة' : 'ملء الشاشة'}
+                    >
+                        <FullscreenIcon active={isFullscreen} />
+                    </button>
                 </div>
             )}
 
