@@ -6,13 +6,14 @@ import khatmDua from '../data/khatmDua'
 import './Mushaf.css'
 
 const TOTAL_PAGES = 604
-// Dark theme (white text on a dark page) reads far more comfortably than a
-// bright white page against this app's midnight UI, especially at night.
-const IMAGE_BASE = 'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/dark'
+// Classic bright Mushaf page — black ink on a cream page, matching the
+// standard printed Madani Mushaf look.
+const IMAGE_BASE = 'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/light'
 const LAST_PAGE_KEY = 'mushafLastPage'
 const BOOKMARK_KEY = 'mushafBookmark'
 const TAP_THRESHOLD = 8
 const SWIPE_THRESHOLD = 50
+const QUARTER_LABELS = ['الربع الأول', 'الربع الثاني', 'الربع الثالث', 'الربع الرابع']
 
 const PANEL_TITLES = {
     juz: 'الأجزاء',
@@ -37,6 +38,49 @@ function FullscreenIcon({ active }) {
     )
 }
 
+function JuzIcon() {
+    return (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="M12 3.5V12l6 6" />
+        </svg>
+    )
+}
+
+function IndexIcon() {
+    return (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h10" />
+        </svg>
+    )
+}
+
+function BookmarkIcon({ filled }) {
+    return (
+        <svg width="16" height="17" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 3.5h12v17l-6-4.2-6 4.2v-17Z" />
+        </svg>
+    )
+}
+
+function PagesIcon() {
+    return (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="6" y="3.5" width="13" height="17" rx="1.5" />
+            <path d="M9.5 8h6M9.5 12h6M9.5 16h4" />
+        </svg>
+    )
+}
+
+function DuaIcon() {
+    return (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M6 21c0-4 1-7 2-9M18 21c0-4-1-7-2-9" />
+            <path d="M8 12c0-4 1.2-8 2.2-9.5a1 1 0 0 1 1.8.6V11M16 12c0-4-1.2-8-2.2-9.5a1 1 0 0 0-1.8.6" />
+        </svg>
+    )
+}
+
 function findForPage(list, page) {
     let current = list[0]
     for (const entry of list) {
@@ -44,6 +88,29 @@ function findForPage(list, page) {
         else break
     }
     return current
+}
+
+function findIndexForPage(list, page) {
+    let idx = 0
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].page <= page) idx = i
+        else break
+    }
+    return idx
+}
+
+function hizbInfoForPage(page) {
+    const juzIndex = findIndexForPage(mushafJuzPages, page)
+    const juz = mushafJuzPages[juzIndex]
+    const nextJuz = mushafJuzPages[juzIndex + 1]
+    const juzStart = juz.page
+    const juzEnd = nextJuz ? nextJuz.page - 1 : TOTAL_PAGES
+    const span = Math.max(1, juzEnd - juzStart + 1)
+    const quarterIdx = Math.min(7, Math.floor(((page - juzStart) / span) * 8))
+    return {
+        hizbNumber: (juz.id - 1) * 2 + Math.floor(quarterIdx / 4) + 1,
+        quarterLabel: QUARTER_LABELS[quarterIdx % 4]
+    }
 }
 
 function loadStoredPage(key, fallback) {
@@ -85,6 +152,7 @@ function Mushaf() {
 
     const surah = useMemo(() => findForPage(mushafSurahPages, page), [page])
     const juz = useMemo(() => findForPage(mushafJuzPages, page), [page])
+    const hizbInfo = useMemo(() => hizbInfoForPage(page), [page])
 
     useEffect(() => {
         try { localStorage.setItem(LAST_PAGE_KEY, String(page)) } catch { /* ignore */ }
@@ -187,6 +255,7 @@ function Mushaf() {
                 onPointerUp={handlePointerUp}
                 onPointerCancel={() => { pointerStart.current = null }}
             >
+                <span className="mushaf-ribbon" aria-hidden="true" />
                 {imgError ? (
                     <div className="mushaf-error">
                         <p>تعذر تحميل هذه الصفحة.</p>
@@ -205,18 +274,35 @@ function Mushaf() {
             </div>
 
             {showOverlay && (
-                <div className="mushaf-bottombar">
-                    <div className="mushaf-toolbar-row">
-                        <button onClick={() => setPanel('juz')}>الأجزاء</button>
-                        <button onClick={() => setPanel('index')}>الفهرس</button>
-                        <button onClick={handleSaveBookmark}>{savedFlash ? 'تم الحفظ ✓' : 'حفظ علامة'}</button>
+                <>
+                    <div className="mushaf-hizb-badge">
+                        {hizbInfo.quarterLabel} — الحزب {hizbInfo.hizbNumber}
                     </div>
-                    <div className="mushaf-toolbar-row">
-                        <button onClick={() => setPanel('khatm')}>دعاء الختم</button>
-                        <button onClick={() => setPanel('pages')}>الصفحات</button>
-                        <button onClick={handleGoBookmark} disabled={!bookmark}>انتقال للعلامة</button>
+                    <div className="mushaf-bottombar">
+                        <div className="mushaf-toolbar-row">
+                            <button onClick={() => setPanel('juz')}>
+                                <JuzIcon /><span>الأجزاء</span>
+                            </button>
+                            <button onClick={() => setPanel('index')}>
+                                <IndexIcon /><span>الفهرس</span>
+                            </button>
+                            <button onClick={handleSaveBookmark}>
+                                <BookmarkIcon filled /><span>{savedFlash ? 'تم الحفظ ✓' : 'حفظ علامة'}</span>
+                            </button>
+                        </div>
+                        <div className="mushaf-toolbar-row">
+                            <button onClick={() => setPanel('khatm')}>
+                                <DuaIcon /><span>دعاء الختم</span>
+                            </button>
+                            <button onClick={() => setPanel('pages')}>
+                                <PagesIcon /><span>الصفحات</span>
+                            </button>
+                            <button onClick={handleGoBookmark} disabled={!bookmark}>
+                                <BookmarkIcon /><span>انتقال للعلامة</span>
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </>
             )}
 
             {panel && (
