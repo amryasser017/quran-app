@@ -52,7 +52,7 @@ function ReciterPage() {
             const surahInfo = surahNames.find(s => s.id === surahNum)
             return {
                 key: `api-${surahNum}`,
-                title: surahInfo ? surahInfo.name.trim() : `Surah ${surahNum}`,
+                title: surahInfo ? surahInfo.name.trim() : `سورة ${surahNum}`,
                 number: surahNum,
                 audioUrl: buildAudioUrl(moshaf.server, surahNum),
                 isExtra: false
@@ -74,9 +74,9 @@ function ReciterPage() {
 
     const player = usePlaylistPlayer(allSurahs)
 
-    if (loading) return <p className="status-text">Loading...</p>
-    if (!reciter) return <p className="status-text">Reciter not found.</p>
-    if (!moshaf) return <p className="status-text">No recitation data available for this reciter.</p>
+    if (loading) return <p className="status-text">جارِ التحميل...</p>
+    if (!reciter) return <p className="status-text">القارئ غير موجود.</p>
+    if (!moshaf) return <p className="status-text">لا تتوفر بيانات تلاوة لهذا القارئ.</p>
 
     const filteredSurahs = allSurahs.filter(surah =>
         surah.title.toLowerCase().includes(searchTerm.trim().toLowerCase()) ||
@@ -85,7 +85,7 @@ function ReciterPage() {
 
     return (
         <section className="reciter-page">
-            <Link to="/full-sowar" className="back-link">&larr; Back to Full Sowar</Link>
+            <Link to="/full-sowar" className="back-link">&rarr; رجوع إلى السور كاملة</Link>
 
             <div className="reciter-header">
                 <ReciterAvatar reciter={reciter} />
@@ -98,13 +98,13 @@ function ReciterPage() {
             <input
                 type="text"
                 className="search-input"
-                placeholder="Search by surah name or number..."
+                placeholder="ابحث باسم السورة أو رقمها..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             {filteredSurahs.length === 0 ? (
-                <p className="status-text">No surahs match "{searchTerm}".</p>
+                <p className="status-text">لا توجد سور مطابقة لـ "{searchTerm}".</p>
             ) : (
                 <div className="surah-grid">
                     {filteredSurahs.map(surah => {
@@ -118,7 +118,7 @@ function ReciterPage() {
                                     className="play-btn"
                                     onClick={() => isCurrent ? player.togglePlayPause() : player.play(surah.index)}
                                 >
-                                    {isCurrent && player.isPlaying ? '⏸ Pause' : '▶ Play'}
+                                    {isCurrent && player.isPlaying ? '⏸ إيقاف' : '▶ تشغيل'}
                                 </button>
                             </div>
                         )

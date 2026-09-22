@@ -24,26 +24,26 @@ function ShortClipsHome() {
         reciter.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
     )
 
-    if (loading) return <p className="status-text">Loading...</p>
+    if (loading) return <p className="status-text">جارِ التحميل...</p>
 
     return (
         <section className="home">
-            <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">Short Parts</h1>
-            <p className="page-subtitle">Chosen highlights from favorite reciters</p>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
+            <h1 className="page-title">مقاطع مختارة</h1>
+            <p className="page-subtitle">مقاطع مختارة من القراء المفضلين</p>
 
             <input
                 type="text"
                 className="search-input"
-                placeholder="Search by reciter name..."
+                placeholder="ابحث باسم القارئ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             {reciters.length === 0 ? (
-                <p className="status-text">No reciters added yet. Use the admin area to add the first one.</p>
+                <p className="status-text">لم يُضَف أي قارئ بعد. استخدم لوحة الإدارة لإضافة أول قارئ.</p>
             ) : filteredReciters.length === 0 ? (
-                <p className="status-text">No reciters match "{searchTerm}".</p>
+                <p className="status-text">لا يوجد قراء مطابقون لـ "{searchTerm}".</p>
             ) : (
                 <div className="reciters-grid">
                     {filteredReciters.map(reciter => (

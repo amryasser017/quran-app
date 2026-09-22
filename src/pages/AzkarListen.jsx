@@ -68,7 +68,7 @@ function AzkarListen() {
 
     return (
         <section className="azkar-page" dir="rtl">
-            <Link to="/azkar" className="back-link">رجوع</Link>
+            <Link to="/azkar" className="back-link">&rarr; رجوع</Link>
             <h1 className="page-title">استمع إلى الأذكار</h1>
             <p className="page-subtitle">بصوت الشيخ مشاري راشد العفاسي</p>
 

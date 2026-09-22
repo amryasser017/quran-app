@@ -61,6 +61,8 @@ function formatTime(seconds) {
     return `${m}:${s.toString().padStart(2, '0')}`
 }
 
+const REPEAT_LABELS_AR = { off: 'التكرار متوقف', one: 'تكرار المقطع الحالي', all: 'تكرار الكل' }
+
 function PlayerBar({ player, subtitle }) {
     const {
         currentTrack, isPlaying, repeatMode, progress, duration, audioRef,
@@ -90,7 +92,7 @@ function PlayerBar({ player, subtitle }) {
                 value={progress}
                 onChange={(e) => seek(Number(e.target.value))}
                 style={{ backgroundSize: `${pct}% 100%` }}
-                aria-label="Seek"
+                aria-label="التقديم"
             />
 
             <div className="player-bar-row">
@@ -100,11 +102,11 @@ function PlayerBar({ player, subtitle }) {
                 </div>
 
                 <div className="player-controls">
-                    <button className="player-icon-btn" onClick={prev} aria-label="Previous"><PrevIcon /></button>
-                    <button className="player-play-btn" onClick={togglePlayPause} aria-label={isPlaying ? 'Pause' : 'Play'}>
+                    <button className="player-icon-btn" onClick={prev} aria-label="السابق"><PrevIcon /></button>
+                    <button className="player-play-btn" onClick={togglePlayPause} aria-label={isPlaying ? 'إيقاف مؤقت' : 'تشغيل'}>
                         {isPlaying ? <PauseIcon /> : <PlayIcon />}
                     </button>
-                    <button className="player-icon-btn" onClick={next} aria-label="Next"><NextIcon /></button>
+                    <button className="player-icon-btn" onClick={next} aria-label="التالي"><NextIcon /></button>
                 </div>
 
                 <div className="player-side-controls">
@@ -112,13 +114,13 @@ function PlayerBar({ player, subtitle }) {
                     <button
                         className={`player-repeat-btn repeat-${repeatMode}`}
                         onClick={cycleRepeat}
-                        aria-label={`Repeat: ${repeatMode}`}
-                        title={`Repeat: ${repeatMode === 'all' ? 'all' : repeatMode === 'one' ? 'one' : 'off'}`}
+                        aria-label={REPEAT_LABELS_AR[repeatMode]}
+                        title={REPEAT_LABELS_AR[repeatMode]}
                     >
                         <RepeatIcon />
                         {repeatMode === 'one' && <span className="player-repeat-badge">1</span>}
                     </button>
-                    <button className="player-close-btn" onClick={stop} aria-label="Close player"><CloseIcon /></button>
+                    <button className="player-close-btn" onClick={stop} aria-label="إغلاق المشغل"><CloseIcon /></button>
                 </div>
             </div>
         </div>,

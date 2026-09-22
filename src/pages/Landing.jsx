@@ -3,44 +3,44 @@ import './Landing.css'
 function Landing() {
     return (
         <section className="landing">
-            <h1 className="landing-title">Quran</h1>
-            <p className="landing-subtitle">Listen to the Quran, and never miss a prayer</p>
+            <h1 className="landing-title">القرآن الكريم</h1>
+            <p className="landing-subtitle">استمع إلى القرآن الكريم، ولا تفوّت صلاة أبدًا</p>
 
             <div className="landing-cards">
                 <Link to="/full-sowar" className="landing-card">
                     <span className="landing-card-icon">📖</span>
-                    <h2>Full Sowar</h2>
-                    <p>Complete surah recitations from many reciters, start to finish.</p>
+                    <h2>السور كاملة</h2>
+                    <p>تلاوات كاملة للسور من العديد من القراء، من البداية إلى النهاية.</p>
                 </Link>
 
                 <Link to="/short-clips" className="landing-card">
                     <span className="landing-card-icon">✨</span>
-                    <h2>Short Parts</h2>
-                    <p>Short, chosen highlights — a specific ayah or moment from a recitation.</p>
+                    <h2>مقاطع مختارة</h2>
+                    <p>مقاطع قصيرة مختارة — آية أو لحظة معينة من التلاوة.</p>
                 </Link>
 
                 <Link to="/prayer-times" className="landing-card">
                     <span className="landing-card-icon">🕌</span>
-                    <h2>Prayer Times</h2>
-                    <p>Accurate prayer times for any city — auto-detected or searched.</p>
+                    <h2>مواقيت الصلاة</h2>
+                    <p>مواقيت صلاة دقيقة لأي مدينة — تلقائيًا أو بالبحث.</p>
                 </Link>
 
                 <Link to="/azkar" className="landing-card">
                     <span className="landing-card-icon">📿</span>
-                    <h2>Azkar Al-Sabah wa Al-Masaa</h2>
-                    <p>Morning and evening remembrances — read or listen, in Arabic.</p>
+                    <h2>أذكار الصباح والمساء</h2>
+                    <p>أذكار الصباح والمساء — اقرأ أو استمع.</p>
                 </Link>
 
                 <Link to="/events" className="landing-card">
                     <span className="landing-card-icon">🌙</span>
-                    <h2>Events</h2>
-                    <p>Countdown to Ramadan, Eid, Mawlid, and the Islamic New Year.</p>
+                    <h2>المناسبات</h2>
+                    <p>العد التنازلي لرمضان والعيدين والمولد النبوي ورأس السنة الهجرية.</p>
                 </Link>
 
                 <Link to="/asmaa-allah" className="landing-card">
                     <span className="landing-card-icon">🕋</span>
-                    <h2>99 Names of Allah</h2>
-                    <p>The 99 Names of Allah, each with its meaning.</p>
+                    <h2>أسماء الله الحسنى</h2>
+                    <p>أسماء الله الحسنى التسعة والتسعون، مع معنى كل اسم.</p>
                 </Link>
             </div>
         </section>

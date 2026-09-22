@@ -5,9 +5,9 @@ import './AsmaaAllah.css'
 function Asmaa_Allah_El_hosnah() {
     return (
         <section className="asmaa-page">
-            <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">99 Names of Allah</h1>
-            <p className="page-subtitle" dir="rtl">اسماء الله الحسني</p>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
+            <h1 className="page-title">أسماء الله الحسنى</h1>
+            <p className="page-subtitle">اسماء الله الحسني</p>
 
             <div className="asmaa-grid">
                 {names99.map(name => (

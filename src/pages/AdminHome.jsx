@@ -15,21 +15,21 @@ function AdminHome() {
     return (
         <section className="admin-home">
             <div className="admin-top">
-                <h1>Admin</h1>
-                <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+                <h1>الإدارة</h1>
+                <button className="logout-btn" onClick={handleLogout}>تسجيل الخروج</button>
             </div>
 
             <div className="admin-home-cards">
                 <Link to="/admin/full-sowar" className="admin-home-card">
                     <span className="admin-home-card-icon">📖</span>
-                    <h2>Control Full Sowar</h2>
-                    <p>Add reciters, add or edit surah recordings, including for reciters already pulled from the API.</p>
+                    <h2>إدارة السور كاملة</h2>
+                    <p>أضف قراء، وأضف أو عدّل تسجيلات السور، حتى للقراء المسحوبين من الواجهة البرمجية مسبقًا.</p>
                 </Link>
 
                 <Link to="/admin/short-parts" className="admin-home-card">
                     <span className="admin-home-card-icon">✨</span>
-                    <h2>Control Short Parts</h2>
-                    <p>Add reciters and short highlight clips for the Short Parts section.</p>
+                    <h2>إدارة المقاطع المختارة</h2>
+                    <p>أضف قراء ومقاطع مختارة قصيرة لقسم المقاطع المختارة.</p>
                 </Link>
             </div>
         </section>

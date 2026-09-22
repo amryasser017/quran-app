@@ -36,26 +36,26 @@ function Home() {
         reciter.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
     )
 
-    if (loading) return <p className="status-text">Loading reciters...</p>
+    if (loading) return <p className="status-text">جارِ تحميل القراء...</p>
 
     const totalResults = filteredApi.length + filteredCustom.length
 
     return (
         <section className="home">
-            <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">Full Sowar</h1>
-            <p className="page-subtitle">Complete recitations, start to finish</p>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
+            <h1 className="page-title">السور كاملة</h1>
+            <p className="page-subtitle">تلاوات كاملة، من البداية إلى النهاية</p>
 
             <input
                 type="text"
                 className="search-input"
-                placeholder="Search by reciter name..."
+                placeholder="ابحث باسم القارئ..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             {totalResults === 0 ? (
-                <p className="status-text">No reciters match "{searchTerm}".</p>
+                <p className="status-text">لا يوجد قراء مطابقون لـ "{searchTerm}".</p>
             ) : (
                 <div className="reciters-grid">
                     {filteredCustom.map(reciter => (

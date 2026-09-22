@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getPrayerTimesByCity, getPrayerTimesByCoords, reverseGeocode } from '../api'
 import cities from '../data/cities'
+import { getCountryNameAr } from '../data/countryNamesAr'
 import './PrayerTimes.css'
 
 const STORAGE_KEY = 'prayerLocation'
@@ -15,6 +16,14 @@ const PRAYER_ICONS = {
     Asr: '🌤️',
     Maghrib: '🌇',
     Isha: '🌙'
+}
+const PRAYER_NAMES_AR = {
+    Fajr: 'الفجر',
+    Sunrise: 'الشروق',
+    Dhuhr: 'الظهر',
+    Asr: 'العصر',
+    Maghrib: 'المغرب',
+    Isha: 'العشاء'
 }
 
 function saveLocation(loc) {
@@ -77,14 +86,14 @@ function getCountdown(timings, nextName, nowInZone) {
     if (diff <= 0) diff += 24 * 60
     const h = Math.floor(diff / 60)
     const m = diff % 60
-    return h === 0 ? `in ${m}m` : `in ${h}h ${m}m`
+    return h === 0 ? `بعد ${m} د` : `بعد ${h} س ${m} د`
 }
 
 function formatDisplayTime(hhmm) {
     if (!hhmm) return '--:--'
     const [hStr, mStr] = hhmm.split(':')
     let h = Number(hStr)
-    const period = h >= 12 ? 'PM' : 'AM'
+    const period = h >= 12 ? 'م' : 'ص'
     h = h % 12
     if (h === 0) h = 12
     return `${h}:${mStr} ${period}`
@@ -114,7 +123,7 @@ function PrayerTimes() {
                 setCity(saved.city)
                 setCountry(saved.country || '')
             })
-            .catch(err => setError(err.message || 'Could not load your saved location.'))
+            .catch(err => setError(err.message || 'تعذر تحميل موقعك المحفوظ.'))
             .finally(() => setLoading(false))
     }, [])
 
@@ -136,14 +145,14 @@ function PrayerTimes() {
                 ? { mode: 'coords', city: cityName, country: countryName, ...coords }
                 : { mode: 'city', city: cityName, country: countryName })
         } catch (err) {
-            setError(err.message || 'Something went wrong. Please try again.')
+            setError(err.message || 'حدث خطأ ما. حاول مرة أخرى.')
         }
         setLoading(false)
     }
 
     function handleDetect() {
         if (!navigator.geolocation) {
-            setError('Your browser does not support location detection. Try searching instead.')
+            setError('متصفحك لا يدعم تحديد الموقع. جرّب البحث بدلاً من ذلك.')
             return
         }
         setDetecting(true)
@@ -153,7 +162,7 @@ function PrayerTimes() {
                 const { latitude, longitude } = pos.coords
                 try {
                     const place = await reverseGeocode(latitude, longitude)
-                    const cityName = place?.city || 'Your location'
+                    const cityName = place?.city || 'موقعك'
                     const countryName = place?.country || ''
                     const data = await getPrayerTimesByCoords(latitude, longitude, countryName)
                     setPrayerData(data)
@@ -161,15 +170,15 @@ function PrayerTimes() {
                     setCountry(countryName)
                     saveLocation({ mode: 'coords', city: cityName, country: countryName, latitude, longitude })
                 } catch (err) {
-                    setError(err.message || 'Could not fetch prayer times for your location.')
+                    setError(err.message || 'تعذر جلب مواقيت الصلاة لموقعك.')
                 }
                 setDetecting(false)
             },
             (err) => {
                 setDetecting(false)
                 setError(err.code === err.PERMISSION_DENIED
-                    ? 'Location access was denied. Choose a city instead.'
-                    : 'Could not detect your location. Choose a city instead.')
+                    ? 'تم رفض الوصول إلى الموقع. اختر مدينة بدلاً من ذلك.'
+                    : 'تعذر تحديد موقعك. اختر مدينة بدلاً من ذلك.')
             },
             { timeout: 10000, maximumAge: 600000 }
         )
@@ -207,38 +216,41 @@ function PrayerTimes() {
     const nextPrayer = prayerData ? getNextPrayer(prayerData.timings, nowInZone) : null
     const countdown = prayerData ? getCountdown(prayerData.timings, nextPrayer, nowInZone) : ''
 
+    const cityDisplay = cities.find(c => c.city === city)?.cityAr || city
+    const countryDisplay = getCountryNameAr(country)
+
     return (
         <section className="prayer-page">
-            <Link to="/" className="back-link">&larr; Back</Link>
-            <h1 className="page-title">Prayer Times</h1>
-            <p className="page-subtitle">Accurate prayer times for any city, anywhere</p>
+            <Link to="/" className="back-link">&rarr; رجوع</Link>
+            <h1 className="page-title">مواقيت الصلاة</h1>
+            <p className="page-subtitle">مواقيت صلاة دقيقة لأي مدينة، في أي مكان</p>
 
             {!prayerData && !loading && (
                 <div className="prayer-picker">
                     <button className="detect-btn" onClick={handleDetect} disabled={detecting}>
-                        {detecting ? 'Detecting your location...' : '📍 Detect My Location'}
+                        {detecting ? 'جارِ تحديد موقعك...' : '📍 تحديد موقعي'}
                     </button>
 
-                    <div className="prayer-divider"><span>or</span></div>
+                    <div className="prayer-divider"><span>أو</span></div>
 
                     <form className="prayer-search-row" onSubmit={handleSearchSubmit}>
                         <input
                             type="text"
                             className="search-input prayer-search-input"
-                            placeholder="Search any city... e.g. Cairo, Egypt"
+                            placeholder="ابحث عن أي مدينة... مثال: القاهرة، مصر"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
                         />
-                        <button type="submit" className="prayer-search-btn">Search</button>
+                        <button type="submit" className="prayer-search-btn">بحث</button>
                     </form>
 
                     <div className="prayer-dropdown-row">
-                        <label htmlFor="city-select">Or choose a popular city</label>
+                        <label htmlFor="city-select">أو اختر مدينة شائعة</label>
                         <select id="city-select" defaultValue="" onChange={handleDropdownChange}>
-                            <option value="" disabled>Select a city...</option>
+                            <option value="" disabled>اختر مدينة...</option>
                             {cities.map((c, i) => (
                                 <option key={`${c.city}-${c.country}`} value={i}>
-                                    {c.city}, {c.country}
+                                    {c.cityAr}، {c.countryAr}
                                 </option>
                             ))}
                         </select>
@@ -246,14 +258,14 @@ function PrayerTimes() {
                 </div>
             )}
 
-            {loading && <p className="status-text">Loading prayer times...</p>}
+            {loading && <p className="status-text">جارِ تحميل مواقيت الصلاة...</p>}
             {error && <p className="prayer-error">{error}</p>}
 
             {prayerData && !loading && (
                 <div className="prayer-result">
                     <div className="prayer-location-row">
-                        <h2>{city}{country ? `, ${country}` : ''}</h2>
-                        <button className="change-city-btn" onClick={handleChangeCity}>Change city</button>
+                        <h2>{cityDisplay}{countryDisplay ? `، ${countryDisplay}` : ''}</h2>
+                        <button className="change-city-btn" onClick={handleChangeCity}>تغيير المدينة</button>
                     </div>
                     <p className="prayer-dates">
                         {prayerData.gregorian}{prayerData.hijri ? ` · ${prayerData.hijri}` : ''}
@@ -265,7 +277,7 @@ function PrayerTimes() {
                             return (
                                 <div key={name} className={`prayer-card ${isNext ? 'next' : ''}`}>
                                     <span className="prayer-icon">{PRAYER_ICONS[name]}</span>
-                                    <span className="prayer-name">{name}</span>
+                                    <span className="prayer-name">{PRAYER_NAMES_AR[name]}</span>
                                     <span className="prayer-time">{formatDisplayTime(prayerData.timings[name])}</span>
                                     {isNext && <span className="prayer-countdown">{countdown}</span>}
                                 </div>

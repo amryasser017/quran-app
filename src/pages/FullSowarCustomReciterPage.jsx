@@ -40,8 +40,8 @@ function FullSowarCustomReciterPage() {
 
     const player = usePlaylistPlayer(tracks)
 
-    if (loading) return <p className="status-text">Loading...</p>
-    if (!reciter) return <p className="status-text">Reciter not found.</p>
+    if (loading) return <p className="status-text">جارِ التحميل...</p>
+    if (!reciter) return <p className="status-text">القارئ غير موجود.</p>
 
     const filteredSurahs = tracks.filter(s =>
         s.title.toLowerCase().includes(searchTerm.trim().toLowerCase())
@@ -49,7 +49,7 @@ function FullSowarCustomReciterPage() {
 
     return (
         <section className="reciter-page">
-            <Link to="/full-sowar" className="back-link">&larr; Back to Full Sowar</Link>
+            <Link to="/full-sowar" className="back-link">&rarr; رجوع إلى السور كاملة</Link>
 
             <div className="reciter-header">
                 <Avatar src={reciter.imageUrl} name={reciter.name} />
@@ -61,13 +61,13 @@ function FullSowarCustomReciterPage() {
             <input
                 type="text"
                 className="search-input"
-                placeholder="Search by surah name..."
+                placeholder="ابحث باسم السورة..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
 
             {filteredSurahs.length === 0 ? (
-                <p className="status-text">No surahs match, or none added yet.</p>
+                <p className="status-text">لا توجد نتائج مطابقة، أو لم تتم إضافة سور بعد.</p>
             ) : (
                 <div className="surah-grid">
                     {filteredSurahs.map(surah => {
@@ -79,7 +79,7 @@ function FullSowarCustomReciterPage() {
                                     className="play-btn"
                                     onClick={() => isCurrent ? player.togglePlayPause() : player.play(surah.index)}
                                 >
-                                    {isCurrent && player.isPlaying ? '⏸ Pause' : '▶ Play'}
+                                    {isCurrent && player.isPlaying ? '⏸ إيقاف' : '▶ تشغيل'}
                                 </button>
                             </div>
                         )

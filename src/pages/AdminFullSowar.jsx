@@ -84,10 +84,10 @@ function AdminFullSowar() {
             })
             setReciterName('')
             setReciterImageUrl('')
-            setReciterMsg('Reciter added.')
+            setReciterMsg('تمت إضافة القارئ.')
             loadCustomReciters()
         } catch (err) {
-            setReciterMsg('Failed to add reciter: ' + err.message)
+            setReciterMsg('فشلت إضافة القارئ: ' + err.message)
         }
         setReciterSaving(false)
     }
@@ -107,10 +107,10 @@ function AdminFullSowar() {
             })
             setSurahName('')
             setSurahAudioUrl('')
-            setSurahMsg('Surah added.')
+            setSurahMsg('تمت إضافة السورة.')
             loadAllSurahs()
         } catch (err) {
-            setSurahMsg('Failed to add surah: ' + err.message)
+            setSurahMsg('فشلت إضافة السورة: ' + err.message)
         }
         setSurahSaving(false)
     }
@@ -138,8 +138,8 @@ function AdminFullSowar() {
     async function handleDeleteReciter(reciter) {
         const surahs = surahsForReciter('custom', reciter.id)
         const confirmMsg = surahs.length > 0
-            ? `Delete "${reciter.name}" and all ${surahs.length} surah(s) added for them? This cannot be undone.`
-            : `Delete "${reciter.name}"? This cannot be undone.`
+            ? `حذف "${reciter.name}" وجميع السور المضافة له (${surahs.length})؟ لا يمكن التراجع عن هذا.`
+            : `حذف "${reciter.name}"؟ لا يمكن التراجع عن هذا.`
         if (!confirm(confirmMsg)) return
 
         for (const surah of surahs) {
@@ -172,7 +172,7 @@ function AdminFullSowar() {
     }
 
     async function handleDeleteSurah(surah) {
-        if (!confirm(`Delete the surah "${surah.surahName}"? This cannot be undone.`)) return
+        if (!confirm(`حذف السورة "${surah.surahName}"؟ لا يمكن التراجع عن هذا.`)) return
         await deleteDoc(doc(db, 'fullSowarSurahs', surah.id))
         loadAllSurahs()
     }
@@ -186,45 +186,45 @@ function AdminFullSowar() {
         <section className="admin-dashboard">
             <div className="admin-top">
                 <div>
-                    <Link to="/admin" className="back-link">&larr; Back to Admin</Link>
-                    <h1>Control Full Sowar</h1>
+                    <Link to="/admin" className="back-link">&rarr; رجوع إلى الإدارة</Link>
+                    <h1>إدارة السور كاملة</h1>
                 </div>
-                <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+                <button className="logout-btn" onClick={handleLogout}>تسجيل الخروج</button>
             </div>
 
             <div className="admin-panels">
                 <form className="admin-panel" onSubmit={handleAddReciter}>
-                    <h2>Add a New Reciter</h2>
-                    <p className="admin-hint">For a reciter not already pulled from the API.</p>
+                    <h2>إضافة قارئ جديد</h2>
+                    <p className="admin-hint">لقارئ غير موجود بالفعل من الواجهة البرمجية.</p>
                     <input
                         type="text"
-                        placeholder="Reciter name"
+                        placeholder="اسم القارئ"
                         value={reciterName}
                         onChange={(e) => setReciterName(e.target.value)}
                         required
                     />
                     <input
                         type="url"
-                        placeholder="Image URL (optional — leave blank for a letter avatar)"
+                        placeholder="رابط الصورة (اختياري — اتركه فارغًا لصورة بحرف)"
                         value={reciterImageUrl}
                         onChange={(e) => setReciterImageUrl(e.target.value)}
                     />
                     <button type="submit" disabled={reciterSaving}>
-                        {reciterSaving ? 'Adding...' : 'Add Reciter'}
+                        {reciterSaving ? 'جارِ الإضافة...' : 'إضافة القارئ'}
                     </button>
                     {reciterMsg && <p className="admin-msg">{reciterMsg}</p>}
                 </form>
 
                 <form className="admin-panel" onSubmit={handleAddSurah}>
-                    <h2>Add a Surah</h2>
-                    <p className="admin-hint">Works for reciters already in the app (from the API) or ones you added above.</p>
+                    <h2>إضافة سورة</h2>
+                    <p className="admin-hint">تعمل للقراء الموجودين بالفعل في التطبيق (من الواجهة البرمجية) أو من أضفتهم أعلاه.</p>
 
                     <select
                         value={surahSource}
                         onChange={(e) => { setSurahSource(e.target.value); setSurahReciterId('') }}
                     >
-                        <option value="api">Existing reciter (already in the app)</option>
-                        <option value="custom">My added reciter</option>
+                        <option value="api">قارئ موجود (بالفعل في التطبيق)</option>
+                        <option value="custom">قارئ أضفته بنفسي</option>
                     </select>
 
                     <select
@@ -232,7 +232,7 @@ function AdminFullSowar() {
                         onChange={(e) => setSurahReciterId(e.target.value)}
                         required
                     >
-                        <option value="">Select a reciter...</option>
+                        <option value="">اختر قارئًا...</option>
                         {surahSource === 'api'
                             ? apiReciters.map(r => (
                                 <option key={r.id} value={r.id}>{r.name}</option>
@@ -245,33 +245,33 @@ function AdminFullSowar() {
 
                     <input
                         type="text"
-                        placeholder="Surah name (e.g. Al-Kahf)"
+                        placeholder="اسم السورة (مثال: الكهف)"
                         value={surahName}
                         onChange={(e) => setSurahName(e.target.value)}
                         required
                     />
                     <input
                         type="url"
-                        placeholder="Audio URL"
+                        placeholder="رابط الملف الصوتي"
                         value={surahAudioUrl}
                         onChange={(e) => setSurahAudioUrl(e.target.value)}
                         required
                     />
                     <button type="submit" disabled={surahSaving}>
-                        {surahSaving ? 'Adding...' : 'Add Surah'}
+                        {surahSaving ? 'جارِ الإضافة...' : 'إضافة السورة'}
                     </button>
                     {surahSource === 'custom' && customReciters.length === 0 && (
-                        <p className="admin-msg">Add a reciter above first.</p>
+                        <p className="admin-msg">أضف قارئًا أعلاه أولاً.</p>
                     )}
                     {surahMsg && <p className="admin-msg">{surahMsg}</p>}
                 </form>
             </div>
 
             <div className="admin-manage">
-                <h2>Manage Reciters &amp; Surahs</h2>
+                <h2>إدارة القراء والسور</h2>
                 <p className="admin-hint">
-                    Showing reciters with admin-added surahs, plus any reciters you've fully added yourself.
-                    Reciters pulled from the API with no admin-added surahs aren't listed here — there are too many to manage individually.
+                    يُعرض هنا القراء الذين لديهم سور أضافها المشرف، بالإضافة إلى القراء الذين أضفتهم بالكامل بنفسك.
+                    القراء المسحوبون من الواجهة البرمجية بدون سور مضافة من المشرف غير مدرجين هنا — عددهم كبير جدًا لإدارتهم فرديًا.
                 </p>
 
                 {combinedReciters
@@ -290,17 +290,17 @@ function AdminFullSowar() {
                                             type="text"
                                             value={editReciterName}
                                             onChange={(e) => setEditReciterName(e.target.value)}
-                                            placeholder="Name"
+                                            placeholder="الاسم"
                                         />
                                         <input
                                             type="url"
                                             value={editReciterImageUrl}
                                             onChange={(e) => setEditReciterImageUrl(e.target.value)}
-                                            placeholder="Image URL"
+                                            placeholder="رابط الصورة"
                                         />
                                         <div className="manage-btn-row">
-                                            <button className="save-btn" onClick={() => saveEditReciter(reciter.id)}>Save</button>
-                                            <button className="cancel-btn" onClick={cancelEditReciter}>Cancel</button>
+                                            <button className="save-btn" onClick={() => saveEditReciter(reciter.id)}>حفظ</button>
+                                            <button className="cancel-btn" onClick={cancelEditReciter}>إلغاء</button>
                                         </div>
                                     </div>
                                 ) : (
@@ -311,15 +311,15 @@ function AdminFullSowar() {
                                         >
                                             {isExpanded ? '▾' : '▸'} {reciter.name}
                                             <span className="manage-clip-count">
-                                                {' '}({surahs.length} surah{surahs.length !== 1 ? 's' : ''}
-                                                {reciter.source === 'api' ? ' added' : ''})
+                                                {' '}({surahs.length} سورة
+                                                {reciter.source === 'api' ? ' مضافة' : ''})
                                             </span>
                                         </button>
                                         <div className="manage-btn-row">
                                             {reciter.source === 'custom' && (
                                                 <>
-                                                    <button className="edit-btn" onClick={() => startEditReciter(reciter)}>Edit</button>
-                                                    <button className="delete-btn" onClick={() => handleDeleteReciter(reciter)}>Delete</button>
+                                                    <button className="edit-btn" onClick={() => startEditReciter(reciter)}>تعديل</button>
+                                                    <button className="delete-btn" onClick={() => handleDeleteReciter(reciter)}>حذف</button>
                                                 </>
                                             )}
                                         </div>
@@ -329,7 +329,7 @@ function AdminFullSowar() {
                                 {isExpanded && (
                                     <div className="manage-clips">
                                         {surahs.length === 0 ? (
-                                            <p className="admin-msg">No surahs added for this reciter yet.</p>
+                                            <p className="admin-msg">لم تتم إضافة أي سور لهذا القارئ بعد.</p>
                                         ) : (
                                             surahs.map(surah => {
                                                 const isSurahEditing = editingSurahId === surah.id
@@ -341,25 +341,25 @@ function AdminFullSowar() {
                                                                     type="text"
                                                                     value={editSurahName}
                                                                     onChange={(e) => setEditSurahName(e.target.value)}
-                                                                    placeholder="Surah name"
+                                                                    placeholder="اسم السورة"
                                                                 />
                                                                 <input
                                                                     type="url"
                                                                     value={editSurahAudioUrl}
                                                                     onChange={(e) => setEditSurahAudioUrl(e.target.value)}
-                                                                    placeholder="Audio URL"
+                                                                    placeholder="رابط الملف الصوتي"
                                                                 />
                                                                 <div className="manage-btn-row">
-                                                                    <button className="save-btn" onClick={() => saveEditSurah(surah.id)}>Save</button>
-                                                                    <button className="cancel-btn" onClick={cancelEditSurah}>Cancel</button>
+                                                                    <button className="save-btn" onClick={() => saveEditSurah(surah.id)}>حفظ</button>
+                                                                    <button className="cancel-btn" onClick={cancelEditSurah}>إلغاء</button>
                                                                 </div>
                                                             </div>
                                                         ) : (
                                                             <>
                                                                 <span className="manage-clip-title">{surah.surahName}</span>
                                                                 <div className="manage-btn-row">
-                                                                    <button className="edit-btn" onClick={() => startEditSurah(surah)}>Edit</button>
-                                                                    <button className="delete-btn" onClick={() => handleDeleteSurah(surah)}>Delete</button>
+                                                                    <button className="edit-btn" onClick={() => startEditSurah(surah)}>تعديل</button>
+                                                                    <button className="delete-btn" onClick={() => handleDeleteSurah(surah)}>حذف</button>
                                                                 </div>
                                                             </>
                                                         )}
