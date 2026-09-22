@@ -71,7 +71,16 @@ function usePlaylistPlayer(tracks) {
     const seek = useCallback((time) => {
         const audio = audioRef.current
         if (audio) audio.currentTime = time
+        setProgress(time)
     }, [])
+
+    // Without this, switching tracks kept showing the previous track's
+    // playhead position/duration until the new audio's own events fired,
+    // making the seek bar jump or briefly show a stale fill.
+    useEffect(() => {
+        setProgress(0)
+        setDuration(0)
+    }, [currentIndex])
 
     useEffect(() => {
         const audio = audioRef.current

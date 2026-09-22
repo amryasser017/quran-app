@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './PlayerBar.css'
 
@@ -54,6 +55,16 @@ function CloseIcon() {
     )
 }
 
+function DownloadIcon() {
+    return (
+        <svg {...iconProps} width={17} height={17} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 3v12" />
+            <path d="M7 10.5 12 15.5 17 10.5" />
+            <path d="M4.5 18.5h15" />
+        </svg>
+    )
+}
+
 function formatTime(seconds) {
     if (!isFinite(seconds) || seconds < 0) return '0:00'
     const m = Math.floor(seconds / 60)
@@ -63,6 +74,76 @@ function formatTime(seconds) {
 
 const REPEAT_LABELS_AR = { off: 'التكرار متوقف', one: 'تكرار المقطع الحالي', all: 'تكرار الكل' }
 
+function SeekBar({ progress, duration, seek, setProgress }) {
+    const trackRef = useRef(null)
+    const [dragValue, setDragValue] = useState(null)
+
+    const value = dragValue !== null ? dragValue : progress
+    const pct = duration > 0 ? (value / duration) * 100 : 0
+
+    function valueFromClientX(clientX) {
+        const rect = trackRef.current.getBoundingClientRect()
+        const ratio = rect.width > 0 ? (clientX - rect.left) / rect.width : 0
+        return Math.min(1, Math.max(0, ratio)) * duration
+    }
+
+    function handlePointerDown(e) {
+        if (!duration) return
+        trackRef.current.setPointerCapture(e.pointerId)
+        setDragValue(valueFromClientX(e.clientX))
+    }
+
+    function handlePointerMove(e) {
+        if (dragValue === null) return
+        setDragValue(valueFromClientX(e.clientX))
+    }
+
+    function commitDrag(e) {
+        if (dragValue === null) return
+        const v = valueFromClientX(e.clientX)
+        setDragValue(null)
+        seek(v)
+    }
+
+    function handleKeyDown(e) {
+        if (!duration) return
+        if (e.key === 'Home') { e.preventDefault(); seek(0); return }
+        if (e.key === 'End') { e.preventDefault(); seek(duration); return }
+        const delta = e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : 0
+        if (!delta) return
+        e.preventDefault()
+        seek(Math.min(duration, Math.max(0, progress + delta)))
+    }
+
+    return (
+        <div
+            ref={trackRef}
+            className={`player-seek ${dragValue !== null ? 'dragging' : ''}`}
+            dir="ltr"
+            role="slider"
+            tabIndex={0}
+            aria-label="التقديم"
+            aria-valuemin={0}
+            aria-valuemax={duration || 0}
+            aria-valuenow={value}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={commitDrag}
+            onPointerCancel={commitDrag}
+            onKeyDown={handleKeyDown}
+        >
+            <div className="player-seek-track">
+                <div className="player-seek-fill" style={{ width: `${pct}%` }} />
+                <div className="player-seek-thumb" style={{ left: `${pct}%` }} />
+            </div>
+        </div>
+    )
+}
+
+function sanitizeFilename(name) {
+    return (name || 'تلاوة').replace(/[\\/:*?"<>|]/g, ' ').trim().slice(0, 120)
+}
+
 function PlayerBar({ player, subtitle }) {
     const {
         currentTrack, isPlaying, repeatMode, progress, duration, audioRef,
@@ -70,9 +151,34 @@ function PlayerBar({ player, subtitle }) {
         setProgress, setDuration
     } = player
 
+    const [downloading, setDownloading] = useState(false)
+
+    useEffect(() => {
+        setDownloading(false)
+    }, [currentTrack])
+
     if (!currentTrack) return null
 
-    const pct = duration > 0 ? (progress / duration) * 100 : 0
+    async function handleDownload() {
+        setDownloading(true)
+        const filename = `${sanitizeFilename(currentTrack.title)}.mp3`
+        try {
+            const res = await fetch(currentTrack.audioUrl)
+            if (!res.ok) throw new Error('download failed')
+            const blob = await res.blob()
+            const blobUrl = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = blobUrl
+            a.download = filename
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            URL.revokeObjectURL(blobUrl)
+        } catch {
+            window.open(currentTrack.audioUrl, '_blank')
+        }
+        setDownloading(false)
+    }
 
     return createPortal(
         <div className="player-bar">
@@ -84,16 +190,7 @@ function PlayerBar({ player, subtitle }) {
                 onLoadedMetadata={(e) => setDuration(e.target.duration)}
             />
 
-            <input
-                type="range"
-                className="player-seek"
-                min="0"
-                max={duration || 0}
-                value={progress}
-                onChange={(e) => seek(Number(e.target.value))}
-                style={{ backgroundSize: `${pct}% 100%` }}
-                aria-label="التقديم"
-            />
+            <SeekBar progress={progress} duration={duration} seek={seek} setProgress={setProgress} />
 
             <div className="player-bar-row">
                 <div className="player-track-info">
@@ -111,6 +208,15 @@ function PlayerBar({ player, subtitle }) {
 
                 <div className="player-side-controls">
                     <span className="player-time">{formatTime(progress)} / {formatTime(duration)}</span>
+                    <button
+                        className="player-icon-btn"
+                        onClick={handleDownload}
+                        disabled={downloading}
+                        aria-label={downloading ? 'جارِ التنزيل...' : 'تنزيل الصوت'}
+                        title={downloading ? 'جارِ التنزيل...' : 'تنزيل الصوت'}
+                    >
+                        <DownloadIcon />
+                    </button>
                     <button
                         className={`player-repeat-btn repeat-${repeatMode}`}
                         onClick={cycleRepeat}
