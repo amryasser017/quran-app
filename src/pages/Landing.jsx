@@ -34,7 +34,7 @@ function Landing() {
                 <Link to="/events" className="landing-card">
                     <span className="landing-card-icon">🌙</span>
                     <h2>المناسبات</h2>
-                    <p>العد التنازلي لرمضان والعيدين والمولد النبوي ورأس السنة الهجرية.</p>
+                    <p>العد التنازلي لرمضان والعيدين ورأس السنة الهجرية.</p>
                 </Link>
 
                 <Link to="/asmaa-allah" className="landing-card">
