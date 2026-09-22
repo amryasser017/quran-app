@@ -255,7 +255,7 @@ function Mushaf() {
                 onPointerUp={handlePointerUp}
                 onPointerCancel={() => { pointerStart.current = null }}
             >
-                <span className="mushaf-ribbon" aria-hidden="true" />
+                {bookmark === page && <span className="mushaf-ribbon" aria-hidden="true" />}
                 {imgError ? (
                     <div className="mushaf-error">
                         <p>تعذر تحميل هذه الصفحة.</p>
