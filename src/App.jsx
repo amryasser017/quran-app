@@ -16,6 +16,7 @@ import AdminFullSowar from './pages/AdminFullSowar'
 import AdminShortParts from './pages/AdminShortParts'
 import ProtectedRoute from './components/ProtectedRoute'
 import AsmaaAllahElHosnah from './pages/Asmaa_Allah_El-hosnah'
+import Mushaf from './pages/Mushaf'
 import './App.css'
 
 function App() {
@@ -40,6 +41,8 @@ function App() {
                 <Route path="/events" element={<Events />} />
 
                 <Route path="/asmaa-allah" element={<AsmaaAllahElHosnah />} />
+
+                <Route path="/mushaf" element={<Mushaf />} />
 
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route
