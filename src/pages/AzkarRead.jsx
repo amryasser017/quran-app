@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import azkar from '../data/azkar'
+import useAzkarData from '../hooks/useAzkarData'
 import './Azkar.css'
 
 function buildRemaining(items) {
@@ -11,12 +11,17 @@ function buildRemaining(items) {
 
 function AzkarRead() {
     const [period, setPeriod] = useState('morning')
-    const items = azkar[period]
+    const { data } = useAzkarData()
+    const items = data[period]
     const [remaining, setRemaining] = useState(() => buildRemaining(items))
+
+    useEffect(() => {
+        setRemaining(buildRemaining(items))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items])
 
     function handlePeriodChange(next) {
         setPeriod(next)
-        setRemaining(buildRemaining(azkar[next]))
     }
 
     function handleTap(item) {
