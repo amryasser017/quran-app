@@ -5,6 +5,7 @@ const PRAYER_API_BASE = "https://api.aladhan.com/v1"
 const GEOCODE_API_BASE = "https://api.bigdatacloud.net/data/reverse-geocode-client"
 const ARCHIVE_METADATA_BASE = "https://archive.org/metadata"
 const ARCHIVE_DOWNLOAD_BASE = "https://archive.org/download"
+const DHIKR_API_BASE = "https://api.islamic.app/v1/dhikr"
 
 export async function getReciters() {
     const res = await fetch(`${API_BASE}/reciters?language=ar`)
@@ -117,6 +118,46 @@ export async function hijriToGregorian(day, month, year) {
     if (!g?.date) throw new Error('تعذر تحويل هذا التاريخ الهجري.')
     const [gd, gm, gy] = g.date.split('-').map(Number)
     return new Date(gy, gm - 1, gd)
+}
+
+// islamic.app's dhikr endpoint is a genuine third-party API (not something
+// we generate), built on the Hisn al-Muslim collection, with named
+// shortcuts like "morning"/"evening". Its exact response shape isn't
+// documented anywhere we can reach from here, so this parses defensively
+// across the field-name variants other azkar APIs commonly use, and the
+// caller falls back to the bundled static list if it returns too little.
+function normalizeDhikrItem(raw, idPrefix, index) {
+    if (!raw || typeof raw !== 'object') return null
+    const text = raw.ar || raw.arabic || raw.text || raw.zekr || raw.dhikr || raw.content || ''
+    if (!text || typeof text !== 'string') return null
+    const rawCount = raw.count ?? raw.repeat ?? raw.times ?? raw.reps ?? 1
+    const count = Number(rawCount) || 1
+    const benefit = raw.bless || raw.benefit || raw.fadl || raw.virtue || raw.note || raw.description || ''
+    const reference = raw.source || raw.reference || raw.narrator || raw.hadith || ''
+    return {
+        id: `${idPrefix}-api-${index}`,
+        text,
+        count,
+        ...(benefit ? { benefit } : {}),
+        ...(reference ? { reference } : {})
+    }
+}
+
+export async function getAzkarFromApi(period) {
+    const shortcut = period === 'morning' ? 'morning' : 'evening'
+    const res = await fetch(`${DHIKR_API_BASE}/${shortcut}`)
+    if (!res.ok) throw new Error('azkar api unavailable')
+    const json = await res.json()
+    const list = Array.isArray(json)
+        ? json
+        : (json.data || json.content || json.dhikrs || json.items || json.azkar || [])
+    if (!Array.isArray(list)) throw new Error('unexpected azkar api response shape')
+    const idPrefix = period === 'morning' ? 'm' : 'e'
+    const items = list
+        .map((raw, i) => normalizeDhikrItem(raw, idPrefix, i))
+        .filter(Boolean)
+    if (items.length < 5) throw new Error('azkar api returned too few usable items')
+    return items
 }
 
 // Looks up an Internet Archive item's real file listing at runtime (official,

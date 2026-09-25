@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import azkar from '../data/azkar'
 import { getArchiveAudioFiles } from '../api'
+import useAzkarData from '../hooks/useAzkarData'
 import usePlaylistPlayer from '../hooks/usePlaylistPlayer'
 import PlayerBar from '../components/PlayerBar'
 import './Azkar.css'
@@ -18,7 +18,8 @@ function matchesKeywords(file, keywords) {
 
 function AzkarListen() {
     const [period, setPeriod] = useState('morning')
-    const items = azkar[period]
+    const { data } = useAzkarData()
+    const items = data[period]
 
     const [tracks, setTracks] = useState([])
     const [loadState, setLoadState] = useState('loading') // 'loading' | 'ready' | 'error'
