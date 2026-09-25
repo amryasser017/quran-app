@@ -13,7 +13,6 @@ const LAST_PAGE_KEY = 'mushafLastPage'
 const BOOKMARK_KEY = 'mushafBookmark'
 const TAP_THRESHOLD = 8
 const SWIPE_THRESHOLD = 50
-const QUARTER_LABELS = ['الربع الأول', 'الربع الثاني', 'الربع الثالث', 'الربع الرابع']
 
 const PANEL_TITLES = {
     juz: 'الأجزاء',
@@ -90,29 +89,6 @@ function findForPage(list, page) {
     return current
 }
 
-function findIndexForPage(list, page) {
-    let idx = 0
-    for (let i = 0; i < list.length; i++) {
-        if (list[i].page <= page) idx = i
-        else break
-    }
-    return idx
-}
-
-function hizbInfoForPage(page) {
-    const juzIndex = findIndexForPage(mushafJuzPages, page)
-    const juz = mushafJuzPages[juzIndex]
-    const nextJuz = mushafJuzPages[juzIndex + 1]
-    const juzStart = juz.page
-    const juzEnd = nextJuz ? nextJuz.page - 1 : TOTAL_PAGES
-    const span = Math.max(1, juzEnd - juzStart + 1)
-    const quarterIdx = Math.min(7, Math.floor(((page - juzStart) / span) * 8))
-    return {
-        hizbNumber: (juz.id - 1) * 2 + Math.floor(quarterIdx / 4) + 1,
-        quarterLabel: QUARTER_LABELS[quarterIdx % 4]
-    }
-}
-
 function loadStoredPage(key, fallback) {
     try {
         const raw = localStorage.getItem(key)
@@ -152,7 +128,6 @@ function Mushaf() {
 
     const surah = useMemo(() => findForPage(mushafSurahPages, page), [page])
     const juz = useMemo(() => findForPage(mushafJuzPages, page), [page])
-    const hizbInfo = useMemo(() => hizbInfoForPage(page), [page])
 
     useEffect(() => {
         try { localStorage.setItem(LAST_PAGE_KEY, String(page)) } catch { /* ignore */ }
@@ -274,35 +249,30 @@ function Mushaf() {
             </div>
 
             {showOverlay && (
-                <>
-                    <div className="mushaf-hizb-badge">
-                        {hizbInfo.quarterLabel} — الحزب {hizbInfo.hizbNumber}
+                <div className="mushaf-bottombar">
+                    <div className="mushaf-toolbar-row">
+                        <button onClick={() => setPanel('juz')}>
+                            <JuzIcon /><span>الأجزاء</span>
+                        </button>
+                        <button onClick={() => setPanel('index')}>
+                            <IndexIcon /><span>الفهرس</span>
+                        </button>
+                        <button onClick={handleSaveBookmark}>
+                            <BookmarkIcon filled /><span>{savedFlash ? 'تم الحفظ ✓' : 'حفظ علامة'}</span>
+                        </button>
                     </div>
-                    <div className="mushaf-bottombar">
-                        <div className="mushaf-toolbar-row">
-                            <button onClick={() => setPanel('juz')}>
-                                <JuzIcon /><span>الأجزاء</span>
-                            </button>
-                            <button onClick={() => setPanel('index')}>
-                                <IndexIcon /><span>الفهرس</span>
-                            </button>
-                            <button onClick={handleSaveBookmark}>
-                                <BookmarkIcon filled /><span>{savedFlash ? 'تم الحفظ ✓' : 'حفظ علامة'}</span>
-                            </button>
-                        </div>
-                        <div className="mushaf-toolbar-row">
-                            <button onClick={() => setPanel('khatm')}>
-                                <DuaIcon /><span>دعاء الختم</span>
-                            </button>
-                            <button onClick={() => setPanel('pages')}>
-                                <PagesIcon /><span>الصفحات</span>
-                            </button>
-                            <button onClick={handleGoBookmark} disabled={!bookmark}>
-                                <BookmarkIcon /><span>انتقال للعلامة</span>
-                            </button>
-                        </div>
+                    <div className="mushaf-toolbar-row">
+                        <button onClick={() => setPanel('khatm')}>
+                            <DuaIcon /><span>دعاء الختم</span>
+                        </button>
+                        <button onClick={() => setPanel('pages')}>
+                            <PagesIcon /><span>الصفحات</span>
+                        </button>
+                        <button onClick={handleGoBookmark} disabled={!bookmark}>
+                            <BookmarkIcon /><span>انتقال للعلامة</span>
+                        </button>
                     </div>
-                </>
+                </div>
             )}
 
             {panel && (
