@@ -20,6 +20,12 @@ function Azkar() {
                     <h2>استمع</h2>
                     <p>استمع إلى الأذكار بصوت مقروء تلقائيًا.</p>
                 </Link>
+
+                <Link to="/azkar/library" className="azkar-hub-card">
+                    <span className="azkar-hub-card-icon">📿</span>
+                    <h2>مكتبة الأذكار</h2>
+                    <p>أذكار متنوعة لكل المناسبات، مصنّفة في فولدرز.</p>
+                </Link>
             </div>
         </section>
     )

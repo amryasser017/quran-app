@@ -9,11 +9,14 @@ import PrayerTimes from './pages/PrayerTimes'
 import Azkar from './pages/Azkar'
 import AzkarRead from './pages/AzkarRead'
 import AzkarListen from './pages/AzkarListen'
+import AzkarLibrary from './pages/AzkarLibrary'
+import AzkarFolderPage from './pages/AzkarFolderPage'
 import Events from './pages/Events'
 import AdminLogin from './pages/AdminLogin'
 import AdminHome from './pages/AdminHome'
 import AdminFullSowar from './pages/AdminFullSowar'
 import AdminShortParts from './pages/AdminShortParts'
+import AdminAzkarFolders from './pages/AdminAzkarFolders'
 import ProtectedRoute from './components/ProtectedRoute'
 import AsmaaAllahElHosnah from './pages/Asmaa_Allah_El-hosnah'
 import Mushaf from './pages/Mushaf'
@@ -37,6 +40,8 @@ function App() {
                 <Route path="/azkar" element={<Azkar />} />
                 <Route path="/azkar/read" element={<AzkarRead />} />
                 <Route path="/azkar/listen" element={<AzkarListen />} />
+                <Route path="/azkar/library" element={<AzkarLibrary />} />
+                <Route path="/azkar/library/:folderId" element={<AzkarFolderPage />} />
 
                 <Route path="/events" element={<Events />} />
 
@@ -66,6 +71,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <AdminShortParts />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/admin/azkar-folders"
+                    element={
+                        <ProtectedRoute>
+                            <AdminAzkarFolders />
                         </ProtectedRoute>
                     }
                 />
