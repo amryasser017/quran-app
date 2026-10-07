@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import { db } from '../firebase'
 import './Azkar.css'
 
@@ -15,10 +15,11 @@ function AzkarFolderPage() {
             try {
                 const itemsSnap = await getDocs(query(
                     collection(db, 'azkarItems'),
-                    where('folderId', '==', folderId),
-                    orderBy('createdAt')
+                    where('folderId', '==', folderId)
                 ))
-                setItems(itemsSnap.docs.map(d => ({ id: d.id, ...d.data() })))
+                const itemsData = itemsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+                itemsData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0))
+                setItems(itemsData)
 
                 const foldersSnap = await getDocs(collection(db, 'azkarFolders'))
                 const match = foldersSnap.docs.find(d => d.id === folderId)
