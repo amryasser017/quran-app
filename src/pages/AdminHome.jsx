@@ -31,6 +31,12 @@ function AdminHome() {
                     <h2>إدارة المقاطع المختارة</h2>
                     <p>أضف قراء ومقاطع مختارة قصيرة لقسم المقاطع المختارة.</p>
                 </Link>
+
+                <Link to="/admin/azkar-folders" className="admin-home-card">
+                    <span className="admin-home-card-icon">📿</span>
+                    <h2>إدارة الأذكار</h2>
+                    <p>أضف فولدرز جديدة وتحكم الكامل في كل ذكر: النص والعدد والراوي والآية.</p>
+                </Link>
             </div>
         </section>
     )
