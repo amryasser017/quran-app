@@ -37,6 +37,12 @@ function Landing() {
                     <p>أذكار الصباح والمساء — اقرأ أو استمع.</p>
                 </Link>
 
+                <Link to="/podcasts" className="landing-card">
+                    <span className="landing-card-icon">🎙️</span>
+                    <h2>البودكاست</h2>
+                    <p>استمع إلى حلقات بودكاست متنوعة، مصنّفة في فولدرز.</p>
+                </Link>
+
                 <Link to="/events" className="landing-card">
                     <span className="landing-card-icon">🌙</span>
                     <h2>المناسبات</h2>
