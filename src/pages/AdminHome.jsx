@@ -37,6 +37,12 @@ function AdminHome() {
                     <h2>إدارة الأذكار</h2>
                     <p>أضف فولدرز جديدة وتحكم الكامل في كل ذكر: النص والعدد والراوي والآية.</p>
                 </Link>
+
+                <Link to="/admin/podcasts" className="admin-home-card">
+                    <span className="admin-home-card-icon">🎙️</span>
+                    <h2>إدارة البودكاست</h2>
+                    <p>أضف فولدرز بودكاست، وأضف أو عدّل الحلقات الصوتية بداخلها.</p>
+                </Link>
             </div>
         </section>
     )
