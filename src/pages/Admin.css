@@ -237,6 +237,17 @@
     text-align: center;
 }
 
+.admin-warning {
+    color: #fcd34d;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.28);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 0.8rem;
+    text-align: right;
+    line-height: 1.6;
+}
+
 /* ---------- Dashboard / management pages ---------- */
 
 .admin-dashboard {
