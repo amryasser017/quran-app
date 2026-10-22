@@ -6,6 +6,7 @@ import {
     orderBy, query, serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
+import { audioUrlWarning } from '../utils/audioFormat'
 import './Admin.css'
 
 function AdminShortParts() {
@@ -222,6 +223,9 @@ function AdminShortParts() {
                         onChange={(e) => setClipAudioUrl(e.target.value)}
                         required
                     />
+                    {audioUrlWarning(clipAudioUrl) && (
+                        <p className="admin-warning">⚠️ {audioUrlWarning(clipAudioUrl)}</p>
+                    )}
                     <button type="submit" disabled={clipSaving || reciters.length === 0}>
                         {clipSaving ? 'جارِ الإضافة...' : 'إضافة المقطع'}
                     </button>
@@ -303,6 +307,9 @@ function AdminShortParts() {
                                                                     onChange={(e) => setEditClipAudioUrl(e.target.value)}
                                                                     placeholder="رابط الملف الصوتي"
                                                                 />
+                                                                {audioUrlWarning(editClipAudioUrl) && (
+                                                                    <p className="admin-warning">⚠️ {audioUrlWarning(editClipAudioUrl)}</p>
+                                                                )}
                                                                 <div className="manage-btn-row">
                                                                     <button className="save-btn" onClick={() => saveEditClip(clip.id)}>حفظ</button>
                                                                     <button className="cancel-btn" onClick={cancelEditClip}>إلغاء</button>

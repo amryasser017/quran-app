@@ -152,12 +152,18 @@ function PlayerBar({ player, subtitle }) {
     } = player
 
     const [downloading, setDownloading] = useState(false)
+    const [playError, setPlayError] = useState(false)
 
     useEffect(() => {
         setDownloading(false)
+        setPlayError(false)
     }, [currentTrack])
 
     if (!currentTrack) return null
+
+    function handleAudioError() {
+        setPlayError(true)
+    }
 
     async function handleDownload() {
         setDownloading(true)
@@ -188,6 +194,7 @@ function PlayerBar({ player, subtitle }) {
                 onEnded={handleEnded}
                 onTimeUpdate={(e) => setProgress(e.target.currentTime)}
                 onLoadedMetadata={(e) => setDuration(e.target.duration)}
+                onError={handleAudioError}
             />
 
             <SeekBar progress={progress} duration={duration} seek={seek} setProgress={setProgress} />
@@ -195,7 +202,11 @@ function PlayerBar({ player, subtitle }) {
             <div className="player-bar-row">
                 <div className="player-track-info">
                     <span className="player-track-title">{currentTrack.title}</span>
-                    {subtitle && <span className="player-track-subtitle">{subtitle}</span>}
+                    {playError ? (
+                        <span className="player-track-error">تعذّر تشغيل هذا المقطع — تأكد أن الرابط صيغة صوت (mp3, m4a...) صالحة للتشغيل</span>
+                    ) : subtitle && (
+                        <span className="player-track-subtitle">{subtitle}</span>
+                    )}
                 </div>
 
                 <div className="player-controls">

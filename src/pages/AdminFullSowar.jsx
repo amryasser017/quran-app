@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { getReciters } from '../api'
+import { audioUrlWarning } from '../utils/audioFormat'
 import './Admin.css'
 
 function AdminFullSowar() {
@@ -257,6 +258,9 @@ function AdminFullSowar() {
                         onChange={(e) => setSurahAudioUrl(e.target.value)}
                         required
                     />
+                    {audioUrlWarning(surahAudioUrl) && (
+                        <p className="admin-warning">⚠️ {audioUrlWarning(surahAudioUrl)}</p>
+                    )}
                     <button type="submit" disabled={surahSaving}>
                         {surahSaving ? 'جارِ الإضافة...' : 'إضافة السورة'}
                     </button>
@@ -349,6 +353,9 @@ function AdminFullSowar() {
                                                                     onChange={(e) => setEditSurahAudioUrl(e.target.value)}
                                                                     placeholder="رابط الملف الصوتي"
                                                                 />
+                                                                {audioUrlWarning(editSurahAudioUrl) && (
+                                                                    <p className="admin-warning">⚠️ {audioUrlWarning(editSurahAudioUrl)}</p>
+                                                                )}
                                                                 <div className="manage-btn-row">
                                                                     <button className="save-btn" onClick={() => saveEditSurah(surah.id)}>حفظ</button>
                                                                     <button className="cancel-btn" onClick={cancelEditSurah}>إلغاء</button>

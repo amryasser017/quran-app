@@ -6,6 +6,7 @@ import {
     orderBy, query, serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
+import { audioUrlWarning } from '../utils/audioFormat'
 import './Admin.css'
 
 function AdminPodcasts() {
@@ -225,6 +226,9 @@ function AdminPodcasts() {
                         onChange={(e) => setEpisodeAudioUrl(e.target.value)}
                         required
                     />
+                    {audioUrlWarning(episodeAudioUrl) && (
+                        <p className="admin-warning">⚠️ {audioUrlWarning(episodeAudioUrl)}</p>
+                    )}
                     <button type="submit" disabled={episodeSaving || folders.length === 0}>
                         {episodeSaving ? 'جارِ الإضافة...' : 'إضافة الحلقة'}
                     </button>
@@ -307,6 +311,9 @@ function AdminPodcasts() {
                                                                 onChange={(e) => setEditEpisodeAudioUrl(e.target.value)}
                                                                 placeholder="رابط الملف الصوتي"
                                                             />
+                                                            {audioUrlWarning(editEpisodeAudioUrl) && (
+                                                                <p className="admin-warning">⚠️ {audioUrlWarning(editEpisodeAudioUrl)}</p>
+                                                            )}
                                                             <div className="manage-btn-row">
                                                                 <button className="save-btn" onClick={() => saveEditEpisode(episode.id)}>حفظ</button>
                                                                 <button className="cancel-btn" onClick={cancelEditEpisode}>إلغاء</button>

@@ -54,6 +54,14 @@
     text-overflow: ellipsis;
 }
 
+.player-track-error {
+    font-size: 0.78rem;
+    color: #fca5a5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .player-controls {
     display: flex;
     direction: ltr;
