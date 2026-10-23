@@ -106,6 +106,8 @@ function Mushaf() {
     const [panel, setPanel] = useState(null)
     const [savedFlash, setSavedFlash] = useState(false)
     const [imgError, setImgError] = useState(false)
+    const [retryCount, setRetryCount] = useState(0)
+    const retryTimerRef = useRef(null)
     const [pageInput, setPageInput] = useState('')
     const [isFullscreen, setIsFullscreen] = useState(false)
     const pointerStart = useRef(null)
@@ -132,7 +134,35 @@ function Mushaf() {
     useEffect(() => {
         try { localStorage.setItem(LAST_PAGE_KEY, String(page)) } catch { /* ignore */ }
         setImgError(false)
+        setRetryCount(0)
+        if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
     }, [page])
+
+    useEffect(() => () => {
+        if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
+    }, [])
+
+    function handleImageError() {
+        // The page images come from a public CDN that occasionally has brief
+        // hiccups — retry a couple of times before showing the error state,
+        // instead of making the user tap "retry" for a blip that resolves itself.
+        setRetryCount(count => {
+            if (count < 2) {
+                retryTimerRef.current = setTimeout(() => {
+                    setRetryCount(c => c + 1)
+                }, 900 * (count + 1))
+                return count
+            }
+            setImgError(true)
+            return count
+        })
+    }
+
+    function handleManualRetry(e) {
+        e.stopPropagation()
+        setImgError(false)
+        setRetryCount(0)
+    }
 
     useEffect(() => {
         [page - 1, page + 1].forEach(p => {
@@ -234,16 +264,16 @@ function Mushaf() {
                 {imgError ? (
                     <div className="mushaf-error">
                         <p>تعذر تحميل هذه الصفحة.</p>
-                        <button onClick={(e) => { e.stopPropagation(); setImgError(false) }}>إعادة المحاولة</button>
+                        <button onClick={handleManualRetry}>إعادة المحاولة</button>
                     </div>
                 ) : (
                     <img
-                        key={page}
+                        key={`${page}-${retryCount}`}
                         src={pageImageUrl(page)}
                         alt={`صفحة ${page}`}
                         className="mushaf-image"
                         draggable={false}
-                        onError={() => setImgError(true)}
+                        onError={handleImageError}
                     />
                 )}
             </div>
