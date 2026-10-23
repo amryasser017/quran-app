@@ -8,7 +8,13 @@ import './Mushaf.css'
 const TOTAL_PAGES = 604
 // Classic bright Mushaf page — black ink on a cream page, matching the
 // standard printed Madani Mushaf look.
-const IMAGE_BASE = 'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/light'
+// Two independent sources for the same files: if the CDN hiccups on a page,
+// we fall back to fetching it straight from GitHub instead of just giving up.
+const IMAGE_SOURCES = [
+    'https://cdn.jsdelivr.net/gh/SakinaDevGroup/mushaf-madani-cdn@main/light',
+    'https://raw.githubusercontent.com/SakinaDevGroup/mushaf-madani-cdn/main/light'
+]
+const RETRIES_PER_SOURCE = 2
 const LAST_PAGE_KEY = 'mushafLastPage'
 const BOOKMARK_KEY = 'mushafBookmark'
 const TAP_THRESHOLD = 8
@@ -21,8 +27,8 @@ const PANEL_TITLES = {
     khatm: 'دعاء الختم'
 }
 
-function pageImageUrl(page) {
-    return `${IMAGE_BASE}/p${page}.png`
+function pageImageUrl(page, sourceIndex = 0) {
+    return `${IMAGE_SOURCES[sourceIndex]}/p${page}.png`
 }
 
 function FullscreenIcon({ active }) {
@@ -106,6 +112,7 @@ function Mushaf() {
     const [panel, setPanel] = useState(null)
     const [savedFlash, setSavedFlash] = useState(false)
     const [imgError, setImgError] = useState(false)
+    const [sourceIndex, setSourceIndex] = useState(0)
     const [retryCount, setRetryCount] = useState(0)
     const retryTimerRef = useRef(null)
     const [pageInput, setPageInput] = useState('')
@@ -134,6 +141,7 @@ function Mushaf() {
     useEffect(() => {
         try { localStorage.setItem(LAST_PAGE_KEY, String(page)) } catch { /* ignore */ }
         setImgError(false)
+        setSourceIndex(0)
         setRetryCount(0)
         if (retryTimerRef.current) clearTimeout(retryTimerRef.current)
     }, [page])
@@ -144,23 +152,31 @@ function Mushaf() {
 
     function handleImageError() {
         // The page images come from a public CDN that occasionally has brief
-        // hiccups — retry a couple of times before showing the error state,
-        // instead of making the user tap "retry" for a blip that resolves itself.
+        // hiccups — retry a couple of times, then fall back to fetching the
+        // same file straight from GitHub, before showing the error state.
         setRetryCount(count => {
-            if (count < 2) {
+            if (count < RETRIES_PER_SOURCE) {
                 retryTimerRef.current = setTimeout(() => {
                     setRetryCount(c => c + 1)
                 }, 900 * (count + 1))
                 return count
             }
-            setImgError(true)
-            return count
+
+            setSourceIndex(src => {
+                if (src < IMAGE_SOURCES.length - 1) {
+                    return src + 1
+                }
+                setImgError(true)
+                return src
+            })
+            return 0
         })
     }
 
     function handleManualRetry(e) {
         e.stopPropagation()
         setImgError(false)
+        setSourceIndex(0)
         setRetryCount(0)
     }
 
@@ -268,8 +284,8 @@ function Mushaf() {
                     </div>
                 ) : (
                     <img
-                        key={`${page}-${retryCount}`}
-                        src={pageImageUrl(page)}
+                        key={`${page}-${sourceIndex}-${retryCount}`}
+                        src={pageImageUrl(page, sourceIndex)}
                         alt={`صفحة ${page}`}
                         className="mushaf-image"
                         draggable={false}
