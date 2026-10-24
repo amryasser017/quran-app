@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import azkarSeedData from '../data/azkarSeedData'
+import { normalizeDigitsToInt } from '../utils/digits'
 import './Admin.css'
 
 function AdminAzkarFolders() {
@@ -284,11 +285,11 @@ function AdminAzkarFolders() {
                         }}
                     />
                     <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         placeholder="عدد التكرار (اختياري)"
                         value={itemCount}
-                        onChange={(e) => setItemCount(e.target.value)}
-                        min="1"
+                        onChange={(e) => setItemCount(normalizeDigitsToInt(e.target.value))}
                     />
                     <input
                         type="text"
@@ -382,11 +383,11 @@ function AdminAzkarFolders() {
                                                                 }}
                                                             />
                                                             <input
-                                                                type="number"
+                                                                type="text"
+                                                                inputMode="numeric"
                                                                 value={editItemCount}
-                                                                onChange={(e) => setEditItemCount(e.target.value)}
+                                                                onChange={(e) => setEditItemCount(normalizeDigitsToInt(e.target.value))}
                                                                 placeholder="عدد التكرار"
-                                                                min="1"
                                                             />
                                                             <input
                                                                 type="text"
