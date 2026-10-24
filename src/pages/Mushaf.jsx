@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import mushafSurahPages from '../data/mushafSurahPages'
 import mushafJuzPages from '../data/mushafJuzPages'
 import khatmDua from '../data/khatmDua'
+import { normalizeDigitsToInt } from '../utils/digits'
 import './Mushaf.css'
 
 const TOTAL_PAGES = 604
@@ -357,12 +358,11 @@ function Mushaf() {
                                 <>
                                     <form className="mushaf-page-jump-form" onSubmit={handlePageInputSubmit}>
                                         <input
-                                            type="number"
-                                            min="1"
-                                            max={TOTAL_PAGES}
+                                            type="text"
+                                            inputMode="numeric"
                                             placeholder="رقم الصفحة (1-604)"
                                             value={pageInput}
-                                            onChange={(e) => setPageInput(e.target.value)}
+                                            onChange={(e) => setPageInput(normalizeDigitsToInt(e.target.value))}
                                         />
                                         <button type="submit">اذهب</button>
                                     </form>
