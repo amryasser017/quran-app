@@ -6,7 +6,7 @@ import {
     orderBy, query, serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
-import { uploadAudioFile } from '../utils/uploadAudio'
+import { audioUrlWarning } from '../utils/audioFormat'
 import './Admin.css'
 
 function AdminShortParts() {
@@ -22,9 +22,8 @@ function AdminShortParts() {
 
     const [clipReciterId, setClipReciterId] = useState('')
     const [clipTitle, setClipTitle] = useState('')
-    const [clipAudioFile, setClipAudioFile] = useState(null)
+    const [clipAudioUrl, setClipAudioUrl] = useState('')
     const [clipSaving, setClipSaving] = useState(false)
-    const [clipProgress, setClipProgress] = useState(0)
     const [clipMsg, setClipMsg] = useState('')
 
     const [expandedReciterId, setExpandedReciterId] = useState(null)
@@ -33,9 +32,7 @@ function AdminShortParts() {
     const [editReciterImageUrl, setEditReciterImageUrl] = useState('')
     const [editingClipId, setEditingClipId] = useState(null)
     const [editClipTitle, setEditClipTitle] = useState('')
-    const [editClipAudioFile, setEditClipAudioFile] = useState(null)
-    const [editClipSaving, setEditClipSaving] = useState(false)
-    const [editClipProgress, setEditClipProgress] = useState(0)
+    const [editClipAudioUrl, setEditClipAudioUrl] = useState('')
 
     async function loadReciters() {
         const q = query(collection(db, 'shortClipReciters'), orderBy('name'))
@@ -80,24 +77,22 @@ function AdminShortParts() {
 
     async function handleAddClip(e) {
         e.preventDefault()
-        if (!clipReciterId || !clipTitle.trim() || !clipAudioFile) return
+        if (!clipReciterId || !clipTitle.trim() || !clipAudioUrl.trim()) return
         setClipSaving(true)
-        setClipProgress(0)
         setClipMsg('')
         try {
-            const audioUrl = await uploadAudioFile(clipAudioFile, 'short-clips', setClipProgress)
             await addDoc(collection(db, 'clips'), {
                 reciterId: clipReciterId,
                 title: clipTitle.trim(),
-                audioUrl,
+                audioUrl: clipAudioUrl.trim(),
                 createdAt: serverTimestamp()
             })
             setClipTitle('')
-            setClipAudioFile(null)
+            setClipAudioUrl('')
             setClipMsg('تمت إضافة المقطع.')
             loadAllClips()
         } catch (err) {
-            setClipMsg('فشل رفع المقطع: ' + err.message)
+            setClipMsg('فشلت إضافة المقطع: ' + err.message)
         }
         setClipSaving(false)
     }
@@ -142,8 +137,7 @@ function AdminShortParts() {
     function startEditClip(clip) {
         setEditingClipId(clip.id)
         setEditClipTitle(clip.title)
-        setEditClipAudioFile(null)
-        setEditClipProgress(0)
+        setEditClipAudioUrl(clip.audioUrl)
     }
 
     function cancelEditClip() {
@@ -151,20 +145,13 @@ function AdminShortParts() {
     }
 
     async function saveEditClip(clipId) {
-        if (!editClipTitle.trim()) return
-        setEditClipSaving(true)
-        try {
-            const updates = { title: editClipTitle.trim() }
-            if (editClipAudioFile) {
-                updates.audioUrl = await uploadAudioFile(editClipAudioFile, 'short-clips', setEditClipProgress)
-            }
-            await updateDoc(doc(db, 'clips', clipId), updates)
-            setEditingClipId(null)
-            loadAllClips()
-        } catch (err) {
-            alert('فشل حفظ التعديل: ' + err.message)
-        }
-        setEditClipSaving(false)
+        if (!editClipTitle.trim() || !editClipAudioUrl.trim()) return
+        await updateDoc(doc(db, 'clips', clipId), {
+            title: editClipTitle.trim(),
+            audioUrl: editClipAudioUrl.trim()
+        })
+        setEditingClipId(null)
+        loadAllClips()
     }
 
     async function handleDeleteClip(clip) {
@@ -230,16 +217,17 @@ function AdminShortParts() {
                         required
                     />
                     <input
-                        type="file"
-                        accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
-                        onChange={(e) => setClipAudioFile(e.target.files[0] || null)}
+                        type="url"
+                        placeholder="رابط الملف الصوتي"
+                        value={clipAudioUrl}
+                        onChange={(e) => setClipAudioUrl(e.target.value)}
                         required
                     />
-                    {clipAudioFile && (
-                        <p className="admin-hint" style={{ marginTop: -4 }}>{clipAudioFile.name}</p>
+                    {audioUrlWarning(clipAudioUrl) && (
+                        <p className="admin-warning">⚠️ {audioUrlWarning(clipAudioUrl)}</p>
                     )}
                     <button type="submit" disabled={clipSaving || reciters.length === 0}>
-                        {clipSaving ? `جارِ الرفع... ${clipProgress}%` : 'إضافة المقطع'}
+                        {clipSaving ? 'جارِ الإضافة...' : 'إضافة المقطع'}
                     </button>
                     {reciters.length === 0 && (
                         <p className="admin-msg">أضف قارئًا أولاً قبل إضافة المقاطع.</p>
@@ -313,17 +301,18 @@ function AdminShortParts() {
                                                                     onChange={(e) => setEditClipTitle(e.target.value)}
                                                                     placeholder="العنوان"
                                                                 />
-                                                                <p className="admin-hint">اترك الملف فاضي للاحتفاظ بالملف الحالي، أو اختر ملفًا جديدًا لاستبداله.</p>
                                                                 <input
-                                                                    type="file"
-                                                                    accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
-                                                                    onChange={(e) => setEditClipAudioFile(e.target.files[0] || null)}
+                                                                    type="url"
+                                                                    value={editClipAudioUrl}
+                                                                    onChange={(e) => setEditClipAudioUrl(e.target.value)}
+                                                                    placeholder="رابط الملف الصوتي"
                                                                 />
+                                                                {audioUrlWarning(editClipAudioUrl) && (
+                                                                    <p className="admin-warning">⚠️ {audioUrlWarning(editClipAudioUrl)}</p>
+                                                                )}
                                                                 <div className="manage-btn-row">
-                                                                    <button className="save-btn" onClick={() => saveEditClip(clip.id)} disabled={editClipSaving}>
-                                                                        {editClipSaving ? `جارِ الحفظ... ${editClipAudioFile ? editClipProgress + '%' : ''}` : 'حفظ'}
-                                                                    </button>
-                                                                    <button className="cancel-btn" onClick={cancelEditClip} disabled={editClipSaving}>إلغاء</button>
+                                                                    <button className="save-btn" onClick={() => saveEditClip(clip.id)}>حفظ</button>
+                                                                    <button className="cancel-btn" onClick={cancelEditClip}>إلغاء</button>
                                                                 </div>
                                                             </div>
                                                         ) : (
