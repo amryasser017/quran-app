@@ -6,7 +6,7 @@ import {
     orderBy, query, serverTimestamp
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
-import { uploadAudioFile } from '../utils/uploadAudio'
+import { audioUrlWarning } from '../utils/audioFormat'
 import './Admin.css'
 
 function AdminPodcasts() {
@@ -22,9 +22,8 @@ function AdminPodcasts() {
 
     const [episodeFolderId, setEpisodeFolderId] = useState('')
     const [episodeTitle, setEpisodeTitle] = useState('')
-    const [episodeAudioFile, setEpisodeAudioFile] = useState(null)
+    const [episodeAudioUrl, setEpisodeAudioUrl] = useState('')
     const [episodeSaving, setEpisodeSaving] = useState(false)
-    const [episodeProgress, setEpisodeProgress] = useState(0)
     const [episodeMsg, setEpisodeMsg] = useState('')
 
     const [expandedFolderId, setExpandedFolderId] = useState(null)
@@ -33,9 +32,7 @@ function AdminPodcasts() {
     const [editFolderImageUrl, setEditFolderImageUrl] = useState('')
     const [editingEpisodeId, setEditingEpisodeId] = useState(null)
     const [editEpisodeTitle, setEditEpisodeTitle] = useState('')
-    const [editEpisodeAudioFile, setEditEpisodeAudioFile] = useState(null)
-    const [editEpisodeSaving, setEditEpisodeSaving] = useState(false)
-    const [editEpisodeProgress, setEditEpisodeProgress] = useState(0)
+    const [editEpisodeAudioUrl, setEditEpisodeAudioUrl] = useState('')
 
     async function loadFolders() {
         const q = query(collection(db, 'podcastFolders'), orderBy('name'))
@@ -80,24 +77,22 @@ function AdminPodcasts() {
 
     async function handleAddEpisode(e) {
         e.preventDefault()
-        if (!episodeFolderId || !episodeTitle.trim() || !episodeAudioFile) return
+        if (!episodeFolderId || !episodeTitle.trim() || !episodeAudioUrl.trim()) return
         setEpisodeSaving(true)
-        setEpisodeProgress(0)
         setEpisodeMsg('')
         try {
-            const audioUrl = await uploadAudioFile(episodeAudioFile, 'podcasts', setEpisodeProgress)
             await addDoc(collection(db, 'podcastEpisodes'), {
                 folderId: episodeFolderId,
                 title: episodeTitle.trim(),
-                audioUrl,
+                audioUrl: episodeAudioUrl.trim(),
                 createdAt: serverTimestamp()
             })
             setEpisodeTitle('')
-            setEpisodeAudioFile(null)
+            setEpisodeAudioUrl('')
             setEpisodeMsg('تمت إضافة الحلقة.')
             loadEpisodes()
         } catch (err) {
-            setEpisodeMsg('فشل رفع الحلقة: ' + err.message)
+            setEpisodeMsg('فشلت إضافة الحلقة: ' + err.message)
         }
         setEpisodeSaving(false)
     }
@@ -141,8 +136,7 @@ function AdminPodcasts() {
     function startEditEpisode(episode) {
         setEditingEpisodeId(episode.id)
         setEditEpisodeTitle(episode.title)
-        setEditEpisodeAudioFile(null)
-        setEditEpisodeProgress(0)
+        setEditEpisodeAudioUrl(episode.audioUrl)
     }
 
     function cancelEditEpisode() {
@@ -150,20 +144,13 @@ function AdminPodcasts() {
     }
 
     async function saveEditEpisode(episodeId) {
-        if (!editEpisodeTitle.trim()) return
-        setEditEpisodeSaving(true)
-        try {
-            const updates = { title: editEpisodeTitle.trim() }
-            if (editEpisodeAudioFile) {
-                updates.audioUrl = await uploadAudioFile(editEpisodeAudioFile, 'podcasts', setEditEpisodeProgress)
-            }
-            await updateDoc(doc(db, 'podcastEpisodes', episodeId), updates)
-            setEditingEpisodeId(null)
-            loadEpisodes()
-        } catch (err) {
-            alert('فشل حفظ التعديل: ' + err.message)
-        }
-        setEditEpisodeSaving(false)
+        if (!editEpisodeTitle.trim() || !editEpisodeAudioUrl.trim()) return
+        await updateDoc(doc(db, 'podcastEpisodes', episodeId), {
+            title: editEpisodeTitle.trim(),
+            audioUrl: editEpisodeAudioUrl.trim()
+        })
+        setEditingEpisodeId(null)
+        loadEpisodes()
     }
 
     async function handleDeleteEpisode(episode) {
@@ -233,19 +220,17 @@ function AdminPodcasts() {
                         required
                     />
                     <input
-                        type="file"
-                        accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
-                        onChange={(e) => setEpisodeAudioFile(e.target.files[0] || null)}
+                        type="url"
+                        placeholder="رابط الملف الصوتي"
+                        value={episodeAudioUrl}
+                        onChange={(e) => setEpisodeAudioUrl(e.target.value)}
                         required
                     />
-                    {episodeAudioFile && (
-                        <p className="admin-hint" style={{ marginTop: -4 }}>{episodeAudioFile.name}</p>
-                    )}
-                    {episodeSaving && (
-                        <p className="admin-msg">جارِ الرفع... {episodeProgress}%</p>
+                    {audioUrlWarning(episodeAudioUrl) && (
+                        <p className="admin-warning">⚠️ {audioUrlWarning(episodeAudioUrl)}</p>
                     )}
                     <button type="submit" disabled={episodeSaving || folders.length === 0}>
-                        {episodeSaving ? `جارِ الرفع... ${episodeProgress}%` : 'إضافة الحلقة'}
+                        {episodeSaving ? 'جارِ الإضافة...' : 'إضافة الحلقة'}
                     </button>
                     {folders.length === 0 && (
                         <p className="admin-msg">أضف فولدرًا أعلاه أولاً.</p>
@@ -320,20 +305,18 @@ function AdminPodcasts() {
                                                                 onChange={(e) => setEditEpisodeTitle(e.target.value)}
                                                                 placeholder="عنوان الحلقة"
                                                             />
-                                                            <p className="admin-hint">اترك الملف فاضي للاحتفاظ بالملف الحالي، أو اختر ملفًا جديدًا لاستبداله.</p>
                                                             <input
-                                                                type="file"
-                                                                accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
-                                                                onChange={(e) => setEditEpisodeAudioFile(e.target.files[0] || null)}
+                                                                type="url"
+                                                                value={editEpisodeAudioUrl}
+                                                                onChange={(e) => setEditEpisodeAudioUrl(e.target.value)}
+                                                                placeholder="رابط الملف الصوتي"
                                                             />
-                                                            {editEpisodeSaving && (
-                                                                <p className="admin-msg">جارِ الحفظ... {editEpisodeAudioFile ? `${editEpisodeProgress}%` : ''}</p>
+                                                            {audioUrlWarning(editEpisodeAudioUrl) && (
+                                                                <p className="admin-warning">⚠️ {audioUrlWarning(editEpisodeAudioUrl)}</p>
                                                             )}
                                                             <div className="manage-btn-row">
-                                                                <button className="save-btn" onClick={() => saveEditEpisode(episode.id)} disabled={editEpisodeSaving}>
-                                                                    {editEpisodeSaving ? 'جارِ الحفظ...' : 'حفظ'}
-                                                                </button>
-                                                                <button className="cancel-btn" onClick={cancelEditEpisode} disabled={editEpisodeSaving}>إلغاء</button>
+                                                                <button className="save-btn" onClick={() => saveEditEpisode(episode.id)}>حفظ</button>
+                                                                <button className="cancel-btn" onClick={cancelEditEpisode}>إلغاء</button>
                                                             </div>
                                                         </div>
                                                     ) : (
