@@ -8,7 +8,31 @@ import {
 import { auth, db } from '../firebase'
 import { audioUrlWarning } from '../utils/audioFormat'
 import aqeedaEpisodesFix from '../data/aqeedaEpisodesFix'
+import mumenEpisodesFix from '../data/mumenEpisodesFix'
 import './Admin.css'
+
+async function runEpisodesFix(fixData) {
+    let updated = 0
+    let created = 0
+    for (const ep of fixData.episodes) {
+        if (ep.docId) {
+            await updateDoc(doc(db, 'podcastEpisodes', ep.docId), {
+                title: ep.title,
+                audioUrl: ep.audioUrl
+            })
+            updated++
+        } else {
+            await addDoc(collection(db, 'podcastEpisodes'), {
+                folderId: fixData.folderId,
+                title: ep.title,
+                audioUrl: ep.audioUrl,
+                createdAt: serverTimestamp()
+            })
+            created++
+        }
+    }
+    return { updated, created }
+}
 
 function AdminPodcasts() {
     const navigate = useNavigate()
@@ -37,6 +61,8 @@ function AdminPodcasts() {
 
     const [aqeedaFixing, setAqeedaFixing] = useState(false)
     const [aqeedaFixMsg, setAqeedaFixMsg] = useState('')
+    const [mumenFixing, setMumenFixing] = useState(false)
+    const [mumenFixMsg, setMumenFixMsg] = useState('')
 
     async function loadFolders() {
         const q = query(collection(db, 'podcastFolders'), orderBy('name'))
@@ -168,31 +194,27 @@ function AdminPodcasts() {
         setAqeedaFixing(true)
         setAqeedaFixMsg('')
         try {
-            let updated = 0
-            let created = 0
-            for (const ep of aqeedaEpisodesFix.episodes) {
-                if (ep.docId) {
-                    await updateDoc(doc(db, 'podcastEpisodes', ep.docId), {
-                        title: ep.title,
-                        audioUrl: ep.audioUrl
-                    })
-                    updated++
-                } else {
-                    await addDoc(collection(db, 'podcastEpisodes'), {
-                        folderId: aqeedaEpisodesFix.folderId,
-                        title: ep.title,
-                        audioUrl: ep.audioUrl,
-                        createdAt: serverTimestamp()
-                    })
-                    created++
-                }
-            }
+            const { updated, created } = await runEpisodesFix(aqeedaEpisodesFix)
             setAqeedaFixMsg(`تم: ${updated} رابط اتحدث، ${created} حلقة جديدة اتضافت.`)
             loadEpisodes()
         } catch (err) {
             setAqeedaFixMsg('فشل: ' + err.message)
         }
         setAqeedaFixing(false)
+    }
+
+    async function handleFixMumenEpisodes() {
+        if (!confirm('تحديث روابط حلقات "دروس حياة المؤمن (ياسر الدوسري)" الـ11 بنفس الترتيب الحالي؟')) return
+        setMumenFixing(true)
+        setMumenFixMsg('')
+        try {
+            const { updated, created } = await runEpisodesFix(mumenEpisodesFix)
+            setMumenFixMsg(`تم: ${updated} رابط اتحدث، ${created} حلقة جديدة اتضافت.`)
+            loadEpisodes()
+        } catch (err) {
+            setMumenFixMsg('فشل: ' + err.message)
+        }
+        setMumenFixing(false)
     }
 
     async function handleLogout() {
@@ -280,6 +302,14 @@ function AdminPodcasts() {
                         {aqeedaFixing ? 'جارِ الإصلاح...' : 'إصلاح حلقات العقيدة الإسلامية'}
                     </button>
                     {aqeedaFixMsg && <p className="admin-msg">{aqeedaFixMsg}</p>}
+
+                    <p className="admin-hint" style={{ marginTop: 10 }}>
+                        إصلاح لمرة واحدة: روابط Dropbox لحلقات "دروس حياة المؤمن (ياسر الدوسري)" الـ11 الحالية.
+                    </p>
+                    <button type="button" onClick={handleFixMumenEpisodes} disabled={mumenFixing}>
+                        {mumenFixing ? 'جارِ الإصلاح...' : 'إصلاح حلقات دروس حياة المؤمن'}
+                    </button>
+                    {mumenFixMsg && <p className="admin-msg">{mumenFixMsg}</p>}
                 </form>
             </div>
 
