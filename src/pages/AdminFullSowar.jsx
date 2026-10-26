@@ -7,7 +7,7 @@ import {
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { getReciters } from '../api'
-import { audioUrlWarning } from '../utils/audioFormat'
+import { uploadAudioFile } from '../utils/uploadAudio'
 import './Admin.css'
 
 function AdminFullSowar() {
@@ -25,8 +25,9 @@ function AdminFullSowar() {
     const [surahSource, setSurahSource] = useState('api')
     const [surahReciterId, setSurahReciterId] = useState('')
     const [surahName, setSurahName] = useState('')
-    const [surahAudioUrl, setSurahAudioUrl] = useState('')
+    const [surahAudioFile, setSurahAudioFile] = useState(null)
     const [surahSaving, setSurahSaving] = useState(false)
+    const [surahProgress, setSurahProgress] = useState(0)
     const [surahMsg, setSurahMsg] = useState('')
 
     const [expandedReciterKey, setExpandedReciterKey] = useState(null)
@@ -35,7 +36,9 @@ function AdminFullSowar() {
     const [editReciterImageUrl, setEditReciterImageUrl] = useState('')
     const [editingSurahId, setEditingSurahId] = useState(null)
     const [editSurahName, setEditSurahName] = useState('')
-    const [editSurahAudioUrl, setEditSurahAudioUrl] = useState('')
+    const [editSurahAudioFile, setEditSurahAudioFile] = useState(null)
+    const [editSurahSaving, setEditSurahSaving] = useState(false)
+    const [editSurahProgress, setEditSurahProgress] = useState(0)
 
     async function loadApiReciters() {
         const data = await getReciters()
@@ -95,23 +98,25 @@ function AdminFullSowar() {
 
     async function handleAddSurah(e) {
         e.preventDefault()
-        if (!surahReciterId || !surahName.trim() || !surahAudioUrl.trim()) return
+        if (!surahReciterId || !surahName.trim() || !surahAudioFile) return
         setSurahSaving(true)
+        setSurahProgress(0)
         setSurahMsg('')
         try {
+            const audioUrl = await uploadAudioFile(surahAudioFile, 'full-sowar', setSurahProgress)
             await addDoc(collection(db, 'fullSowarSurahs'), {
                 reciterId: String(surahReciterId),
                 reciterSource: surahSource,
                 surahName: surahName.trim(),
-                audioUrl: surahAudioUrl.trim(),
+                audioUrl,
                 createdAt: serverTimestamp()
             })
             setSurahName('')
-            setSurahAudioUrl('')
+            setSurahAudioFile(null)
             setSurahMsg('تمت إضافة السورة.')
             loadAllSurahs()
         } catch (err) {
-            setSurahMsg('فشلت إضافة السورة: ' + err.message)
+            setSurahMsg('فشل رفع السورة: ' + err.message)
         }
         setSurahSaving(false)
     }
@@ -155,7 +160,8 @@ function AdminFullSowar() {
     function startEditSurah(surah) {
         setEditingSurahId(surah.id)
         setEditSurahName(surah.surahName)
-        setEditSurahAudioUrl(surah.audioUrl)
+        setEditSurahAudioFile(null)
+        setEditSurahProgress(0)
     }
 
     function cancelEditSurah() {
@@ -163,13 +169,20 @@ function AdminFullSowar() {
     }
 
     async function saveEditSurah(surahId) {
-        if (!editSurahName.trim() || !editSurahAudioUrl.trim()) return
-        await updateDoc(doc(db, 'fullSowarSurahs', surahId), {
-            surahName: editSurahName.trim(),
-            audioUrl: editSurahAudioUrl.trim()
-        })
-        setEditingSurahId(null)
-        loadAllSurahs()
+        if (!editSurahName.trim()) return
+        setEditSurahSaving(true)
+        try {
+            const updates = { surahName: editSurahName.trim() }
+            if (editSurahAudioFile) {
+                updates.audioUrl = await uploadAudioFile(editSurahAudioFile, 'full-sowar', setEditSurahProgress)
+            }
+            await updateDoc(doc(db, 'fullSowarSurahs', surahId), updates)
+            setEditingSurahId(null)
+            loadAllSurahs()
+        } catch (err) {
+            alert('فشل حفظ التعديل: ' + err.message)
+        }
+        setEditSurahSaving(false)
     }
 
     async function handleDeleteSurah(surah) {
@@ -252,17 +265,16 @@ function AdminFullSowar() {
                         required
                     />
                     <input
-                        type="url"
-                        placeholder="رابط الملف الصوتي"
-                        value={surahAudioUrl}
-                        onChange={(e) => setSurahAudioUrl(e.target.value)}
+                        type="file"
+                        accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
+                        onChange={(e) => setSurahAudioFile(e.target.files[0] || null)}
                         required
                     />
-                    {audioUrlWarning(surahAudioUrl) && (
-                        <p className="admin-warning">⚠️ {audioUrlWarning(surahAudioUrl)}</p>
+                    {surahAudioFile && (
+                        <p className="admin-hint" style={{ marginTop: -4 }}>{surahAudioFile.name}</p>
                     )}
                     <button type="submit" disabled={surahSaving}>
-                        {surahSaving ? 'جارِ الإضافة...' : 'إضافة السورة'}
+                        {surahSaving ? `جارِ الرفع... ${surahProgress}%` : 'إضافة السورة'}
                     </button>
                     {surahSource === 'custom' && customReciters.length === 0 && (
                         <p className="admin-msg">أضف قارئًا أعلاه أولاً.</p>
@@ -347,18 +359,17 @@ function AdminFullSowar() {
                                                                     onChange={(e) => setEditSurahName(e.target.value)}
                                                                     placeholder="اسم السورة"
                                                                 />
+                                                                <p className="admin-hint">اترك الملف فاضي للاحتفاظ بالملف الحالي، أو اختر ملفًا جديدًا لاستبداله.</p>
                                                                 <input
-                                                                    type="url"
-                                                                    value={editSurahAudioUrl}
-                                                                    onChange={(e) => setEditSurahAudioUrl(e.target.value)}
-                                                                    placeholder="رابط الملف الصوتي"
+                                                                    type="file"
+                                                                    accept="audio/*,video/quicktime,video/mp4,.mov,.mp4,.m4a"
+                                                                    onChange={(e) => setEditSurahAudioFile(e.target.files[0] || null)}
                                                                 />
-                                                                {audioUrlWarning(editSurahAudioUrl) && (
-                                                                    <p className="admin-warning">⚠️ {audioUrlWarning(editSurahAudioUrl)}</p>
-                                                                )}
                                                                 <div className="manage-btn-row">
-                                                                    <button className="save-btn" onClick={() => saveEditSurah(surah.id)}>حفظ</button>
-                                                                    <button className="cancel-btn" onClick={cancelEditSurah}>إلغاء</button>
+                                                                    <button className="save-btn" onClick={() => saveEditSurah(surah.id)} disabled={editSurahSaving}>
+                                                                        {editSurahSaving ? `جارِ الحفظ... ${editSurahAudioFile ? editSurahProgress + '%' : ''}` : 'حفظ'}
+                                                                    </button>
+                                                                    <button className="cancel-btn" onClick={cancelEditSurah} disabled={editSurahSaving}>إلغاء</button>
                                                                 </div>
                                                             </div>
                                                         ) : (
