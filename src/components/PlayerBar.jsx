@@ -188,9 +188,18 @@ function PlayerBar({ player, subtitle }) {
 
     return createPortal(
         <div className="player-bar">
-            <audio
+            {/*
+                A <video> element, not <audio>: some admin-uploaded files are .mov
+                (a QuickTime container iPhones export voice/video recordings as).
+                Browsers support far more containers/codecs through <video> than
+                through <audio>, so this plays mp3/m4a/mov alike with the same
+                HTMLMediaElement API — it's just visually hidden, no video shown.
+            */}
+            <video
                 ref={audioRef}
                 src={currentTrack.audioUrl}
+                playsInline
+                style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
                 onEnded={handleEnded}
                 onTimeUpdate={(e) => setProgress(e.target.currentTime)}
                 onLoadedMetadata={(e) => setDuration(e.target.duration)}
