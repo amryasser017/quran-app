@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { doc, getDoc, collection, query, where, getDocs, orderBy } from 'firebase/firestore'
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '../firebase'
 import Avatar from '../components/Avatar'
 import PlayerBar from '../components/PlayerBar'
@@ -15,18 +15,20 @@ function ShortClipReciterPage() {
 
     useEffect(() => {
         async function load() {
-            const reciterSnap = await getDoc(doc(db, 'shortClipReciters', id))
-            if (reciterSnap.exists()) {
-                setReciter({ id: reciterSnap.id, ...reciterSnap.data() })
-            }
+            try {
+                const reciterSnap = await getDoc(doc(db, 'shortClipReciters', id))
+                if (reciterSnap.exists()) {
+                    setReciter({ id: reciterSnap.id, ...reciterSnap.data() })
+                }
 
-            const q = query(
-                collection(db, 'clips'),
-                where('reciterId', '==', id),
-                orderBy('createdAt', 'desc')
-            )
-            const clipsSnap = await getDocs(q)
-            setClips(clipsSnap.docs.map(d => ({ id: d.id, ...d.data() })))
+                const q = query(collection(db, 'clips'), where('reciterId', '==', id))
+                const clipsSnap = await getDocs(q)
+                const clipsData = clipsSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+                clipsData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
+                setClips(clipsData)
+            } catch (err) {
+                console.error('Could not load short clips:', err)
+            }
             setLoading(false)
         }
         load()
