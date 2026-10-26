@@ -7,6 +7,7 @@ import {
 } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { audioUrlWarning } from '../utils/audioFormat'
+import aqeedaEpisodesFix from '../data/aqeedaEpisodesFix'
 import './Admin.css'
 
 function AdminPodcasts() {
@@ -33,6 +34,9 @@ function AdminPodcasts() {
     const [editingEpisodeId, setEditingEpisodeId] = useState(null)
     const [editEpisodeTitle, setEditEpisodeTitle] = useState('')
     const [editEpisodeAudioUrl, setEditEpisodeAudioUrl] = useState('')
+
+    const [aqeedaFixing, setAqeedaFixing] = useState(false)
+    const [aqeedaFixMsg, setAqeedaFixMsg] = useState('')
 
     async function loadFolders() {
         const q = query(collection(db, 'podcastFolders'), orderBy('name'))
@@ -159,6 +163,38 @@ function AdminPodcasts() {
         loadEpisodes()
     }
 
+    async function handleFixAqeedaEpisodes() {
+        if (!confirm('تحديث روابط حلقات "العقيدة الإسلامية (علاء حامد)" وإضافة الحلقات الناقصة (20-27)؟')) return
+        setAqeedaFixing(true)
+        setAqeedaFixMsg('')
+        try {
+            let updated = 0
+            let created = 0
+            for (const ep of aqeedaEpisodesFix.episodes) {
+                if (ep.docId) {
+                    await updateDoc(doc(db, 'podcastEpisodes', ep.docId), {
+                        title: ep.title,
+                        audioUrl: ep.audioUrl
+                    })
+                    updated++
+                } else {
+                    await addDoc(collection(db, 'podcastEpisodes'), {
+                        folderId: aqeedaEpisodesFix.folderId,
+                        title: ep.title,
+                        audioUrl: ep.audioUrl,
+                        createdAt: serverTimestamp()
+                    })
+                    created++
+                }
+            }
+            setAqeedaFixMsg(`تم: ${updated} رابط اتحدث، ${created} حلقة جديدة اتضافت.`)
+            loadEpisodes()
+        } catch (err) {
+            setAqeedaFixMsg('فشل: ' + err.message)
+        }
+        setAqeedaFixing(false)
+    }
+
     async function handleLogout() {
         await signOut(auth)
         navigate('/admin/login')
@@ -236,6 +272,14 @@ function AdminPodcasts() {
                         <p className="admin-msg">أضف فولدرًا أعلاه أولاً.</p>
                     )}
                     {episodeMsg && <p className="admin-msg">{episodeMsg}</p>}
+
+                    <p className="admin-hint" style={{ marginTop: 10 }}>
+                        إصلاح لمرة واحدة: روابط Dropbox لحلقات "العقيدة الإسلامية (علاء حامد)" وإضافة الحلقات 20-27 الناقصة.
+                    </p>
+                    <button type="button" onClick={handleFixAqeedaEpisodes} disabled={aqeedaFixing}>
+                        {aqeedaFixing ? 'جارِ الإصلاح...' : 'إصلاح حلقات العقيدة الإسلامية'}
+                    </button>
+                    {aqeedaFixMsg && <p className="admin-msg">{aqeedaFixMsg}</p>}
                 </form>
             </div>
 
