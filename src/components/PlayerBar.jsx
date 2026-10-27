@@ -153,16 +153,36 @@ function PlayerBar({ player, subtitle }) {
 
     const [downloading, setDownloading] = useState(false)
     const [playError, setPlayError] = useState(false)
+    const [useVideoFallback, setUseVideoFallback] = useState(false)
 
     useEffect(() => {
         setDownloading(false)
         setPlayError(false)
+        setUseVideoFallback(false)
     }, [currentTrack])
+
+    // Switching the element type (below) unmounts the old one and mounts a new
+    // one at the same ref, so the play/pause effect in usePlaylistPlayer (which
+    // only re-runs on isPlaying/currentTrack changes) never sees it — resume
+    // playback on the freshly mounted element ourselves.
+    useEffect(() => {
+        const el = audioRef.current
+        if (el && isPlaying) el.play().catch(() => {})
+    }, [useVideoFallback, audioRef])
 
     if (!currentTrack) return null
 
-    function handleAudioError() {
-        setPlayError(true)
+    function handleMediaError() {
+        // <audio> can't play a handful of admin-uploaded .mov files — fall back
+        // to a hidden <video> just for those. <audio> stays the default because,
+        // unlike <video>, mobile browsers keep it playing when the screen locks
+        // or the app backgrounds; only the rare file that needs the video
+        // fallback loses that, which beats not playing at all.
+        if (!useVideoFallback) {
+            setUseVideoFallback(true)
+        } else {
+            setPlayError(true)
+        }
     }
 
     async function handleDownload() {
@@ -188,23 +208,27 @@ function PlayerBar({ player, subtitle }) {
 
     return createPortal(
         <div className="player-bar">
-            {/*
-                A <video> element, not <audio>: some admin-uploaded files are .mov
-                (a QuickTime container iPhones export voice/video recordings as).
-                Browsers support far more containers/codecs through <video> than
-                through <audio>, so this plays mp3/m4a/mov alike with the same
-                HTMLMediaElement API — it's just visually hidden, no video shown.
-            */}
-            <video
-                ref={audioRef}
-                src={currentTrack.audioUrl}
-                playsInline
-                style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-                onEnded={handleEnded}
-                onTimeUpdate={(e) => setProgress(e.target.currentTime)}
-                onLoadedMetadata={(e) => setDuration(e.target.duration)}
-                onError={handleAudioError}
-            />
+            {useVideoFallback ? (
+                <video
+                    ref={audioRef}
+                    src={currentTrack.audioUrl}
+                    playsInline
+                    style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                    onEnded={handleEnded}
+                    onTimeUpdate={(e) => setProgress(e.target.currentTime)}
+                    onLoadedMetadata={(e) => setDuration(e.target.duration)}
+                    onError={handleMediaError}
+                />
+            ) : (
+                <audio
+                    ref={audioRef}
+                    src={currentTrack.audioUrl}
+                    onEnded={handleEnded}
+                    onTimeUpdate={(e) => setProgress(e.target.currentTime)}
+                    onLoadedMetadata={(e) => setDuration(e.target.duration)}
+                    onError={handleMediaError}
+                />
+            )}
 
             <SeekBar progress={progress} duration={duration} seek={seek} setProgress={setProgress} />
 
