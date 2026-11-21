@@ -4,7 +4,7 @@
     border: 2px solid transparent;
     background: linear-gradient(var(--bg-blue), var(--bg-blue)) padding-box,
                 var(--grad-primary) border-box;
-    box-shadow: 0 4px 18px rgba(32, 89, 180, 0.35);
+    box-shadow: 0 4px 18px rgba(0, 73, 230, 0.35);
     flex-shrink: 0;
 }
 
@@ -20,6 +20,6 @@
     font-weight: bold;
     background-clip: padding-box, border-box;
     color: var(--accent-purple);
-    box-shadow: 0 4px 18px rgba(98, 145, 222, 0.3);
+    box-shadow: 0 4px 18px rgba(80, 131, 241, 0.3);
     flex-shrink: 0;
 }

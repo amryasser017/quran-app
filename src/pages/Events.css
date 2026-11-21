@@ -59,7 +59,7 @@
 
 .event-card:hover {
     transform: translateY(-5px) scale(1.02);
-    border-color: rgba(32, 89, 180, 0.4);
+    border-color: rgba(0, 73, 230, 0.4);
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
 }
 
