@@ -31,7 +31,7 @@
 
 .podcast-folder-card:hover {
     transform: translateY(-5px) scale(1.02);
-    border-color: rgba(0, 73, 230, 0.4);
+    border-color: rgba(106, 47, 200, 0.4);
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
 }
 
@@ -88,14 +88,14 @@
 
 .episode-card:hover {
     transform: translateY(-3px) scale(1.01);
-    border-color: rgba(0, 73, 230, 0.4);
+    border-color: rgba(106, 47, 200, 0.4);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .episode-card.playing {
-    background: rgba(80, 131, 241, 0.1);
-    border: 1px solid rgba(80, 131, 241, 0.55);
-    box-shadow: 0 0 0 4px rgba(80, 131, 241, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
+    background: rgba(157, 113, 232, 0.1);
+    border: 1px solid rgba(157, 113, 232, 0.55);
+    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
 }
 
 .episode-title {

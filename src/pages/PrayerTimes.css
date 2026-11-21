@@ -120,7 +120,7 @@
     font-family: inherit;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%2370A7EB' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%239D71E8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     padding-right: 38px;
@@ -130,8 +130,8 @@
 
 .prayer-dropdown-row select:focus {
     outline: none;
-    border-color: #5083F1;
-    box-shadow: 0 0 0 4px rgba(80, 131, 241, 0.16);
+    border-color: #9D71E8;
+    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.16);
 }
 
 .prayer-error {
@@ -215,13 +215,13 @@
 
 .prayer-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(0, 73, 230, 0.35);
+    border-color: rgba(106, 47, 200, 0.35);
 }
 
 .prayer-card.next {
-    background: rgba(80, 131, 241, 0.1);
-    border: 1px solid rgba(80, 131, 241, 0.55);
-    box-shadow: 0 0 0 4px rgba(80, 131, 241, 0.12), 0 14px 32px rgba(0, 0, 0, 0.45);
+    background: rgba(157, 113, 232, 0.1);
+    border: 1px solid rgba(157, 113, 232, 0.55);
+    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.12), 0 14px 32px rgba(0, 0, 0, 0.45);
 }
 
 .prayer-icon {
@@ -250,7 +250,7 @@
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--accent-blue);
-    background: rgba(0, 73, 230, 0.12);
+    background: rgba(106, 47, 200, 0.12);
     padding: 3px 10px;
     border-radius: 10px;
     margin-top: 2px;
