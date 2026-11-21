@@ -171,7 +171,7 @@
 .player-repeat-btn.repeat-one {
     opacity: 1;
     color: var(--accent-blue);
-    filter: drop-shadow(0 0 6px rgba(39, 103, 206, 0.6));
+    filter: drop-shadow(0 0 6px rgba(32, 89, 180, 0.6));
 }
 
 .player-repeat-badge {
@@ -253,7 +253,7 @@
     height: 13px;
     border-radius: 50%;
     background: #ffffff;
-    box-shadow: 0 0 0 4px rgba(112, 167, 235, 0.25);
+    box-shadow: 0 0 0 4px rgba(98, 145, 222, 0.25);
     transform: translate(-50%, -50%) scale(0.85);
     opacity: 0;
     pointer-events: none;
@@ -276,7 +276,7 @@
 }
 
 .player-seek:focus-visible .player-seek-track {
-    box-shadow: 0 0 0 2px rgba(112, 167, 235, 0.5);
+    box-shadow: 0 0 0 2px rgba(98, 145, 222, 0.5);
 }
 
 @media (max-width: 640px) {

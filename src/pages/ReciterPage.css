@@ -47,14 +47,14 @@
 
 .surah-card:hover {
     transform: translateY(-3px) scale(1.02);
-    border-color: rgba(39, 103, 206, 0.4);
+    border-color: rgba(32, 89, 180, 0.4);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .surah-card.playing {
-    background: rgba(112, 167, 235, 0.1);
-    border: 1px solid rgba(112, 167, 235, 0.55);
-    box-shadow: 0 0 0 4px rgba(112, 167, 235, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
+    background: rgba(98, 145, 222, 0.1);
+    border: 1px solid rgba(98, 145, 222, 0.55);
+    box-shadow: 0 0 0 4px rgba(98, 145, 222, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
 }
 
 .surah-number {

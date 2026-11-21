@@ -1,13 +1,13 @@
 :root {
-    --bg-black: #070F20;
-    --bg-blue: #0D1B37;
-    --bg-purple: #13264D;
-    --surface: rgba(184, 219, 255, 0.055);
-    --surface-hover: rgba(184, 219, 255, 0.1);
-    --border: rgba(184, 219, 255, 0.14);
-    --accent-blue: #2767CE;
-    --accent-purple: #70A7EB;
-    --accent-teal: #B8DBFF;
+    --bg-black: #050C16;
+    --bg-blue: #0B1729;
+    --bg-purple: #10213C;
+    --surface: rgba(182, 202, 234, 0.055);
+    --surface-hover: rgba(182, 202, 234, 0.1);
+    --border: rgba(182, 202, 234, 0.14);
+    --accent-blue: #2059B4;
+    --accent-purple: #6291DE;
+    --accent-teal: #B6CAEA;
     --text: #EBF6FF;
     --text-dim: #90A4B8;
     --grad-primary: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 55%, var(--accent-teal) 100%);
@@ -42,9 +42,9 @@ body::before {
     z-index: 0;
     pointer-events: none;
     background-image:
-        radial-gradient(circle at 12% 12%, rgba(39, 103, 206, 0.16), transparent 42%),
-        radial-gradient(circle at 88% 10%, rgba(112, 167, 235, 0.16), transparent 42%),
-        radial-gradient(circle at 50% 96%, rgba(184, 219, 255, 0.11), transparent 48%);
+        radial-gradient(circle at 12% 12%, rgba(32, 89, 180, 0.16), transparent 42%),
+        radial-gradient(circle at 88% 10%, rgba(98, 145, 222, 0.16), transparent 42%),
+        radial-gradient(circle at 50% 96%, rgba(182, 202, 234, 0.11), transparent 48%);
     filter: blur(80px);
     animation: aurora-drift 26s ease-in-out infinite alternate;
 }
@@ -130,9 +130,9 @@ body::before {
 
 .search-input:focus {
     outline: none;
-    border-color: rgba(112, 167, 235, 0.55);
+    border-color: rgba(98, 145, 222, 0.55);
     background-color: var(--surface-hover);
-    box-shadow: 0 0 0 4px rgba(112, 167, 235, 0.14);
+    box-shadow: 0 0 0 4px rgba(98, 145, 222, 0.14);
 }
 
 .back-link {

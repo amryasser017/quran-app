@@ -6,17 +6,17 @@
 .admin-login,
 .admin-dashboard,
 .admin-home {
-    --admin-navy: #070F20;
-    --admin-indigo: #0D1B37;
-    --admin-violet: #13264D;
-    --admin-glow-blue: rgba(39, 103, 206, 0.35);
-    --admin-glow-purple: rgba(112, 167, 235, 0.30);
-    --admin-glow-teal: rgba(184, 219, 255, 0.22);
-    --admin-glass: rgba(184, 219, 255, 0.055);
-    --admin-glass-hover: rgba(184, 219, 255, 0.095);
-    --admin-glass-border: rgba(184, 219, 255, 0.14);
+    --admin-navy: #050C16;
+    --admin-indigo: #0B1729;
+    --admin-violet: #10213C;
+    --admin-glow-blue: rgba(32, 89, 180, 0.35);
+    --admin-glow-purple: rgba(98, 145, 222, 0.30);
+    --admin-glow-teal: rgba(182, 202, 234, 0.22);
+    --admin-glass: rgba(182, 202, 234, 0.055);
+    --admin-glass-hover: rgba(182, 202, 234, 0.095);
+    --admin-glass-border: rgba(182, 202, 234, 0.14);
     --admin-shadow: 0 8px 32px rgba(2, 1, 8, 0.5);
-    --admin-grad: linear-gradient(135deg, #2767CE 0%, #70A7EB 55%, #B8DBFF 100%);
+    --admin-grad: linear-gradient(135deg, #2059B4 0%, #6291DE 55%, #B6CAEA 100%);
 
     position: relative;
     isolation: isolate;
@@ -42,9 +42,9 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-        radial-gradient(circle at 18% 22%, rgba(39, 103, 206, 0.20), transparent 42%),
-        radial-gradient(circle at 82% 18%, rgba(112, 167, 235, 0.18), transparent 42%),
-        radial-gradient(circle at 50% 92%, rgba(184, 219, 255, 0.14), transparent 46%);
+        radial-gradient(circle at 18% 22%, rgba(32, 89, 180, 0.20), transparent 42%),
+        radial-gradient(circle at 82% 18%, rgba(98, 145, 222, 0.18), transparent 42%),
+        radial-gradient(circle at 50% 92%, rgba(182, 202, 234, 0.14), transparent 46%);
     filter: blur(70px);
     animation: admin-aurora-drift 22s ease-in-out infinite alternate;
 }
@@ -73,7 +73,7 @@
 .admin-home,
 .manage-clips {
     scrollbar-width: thin;
-    scrollbar-color: rgba(112, 167, 235, 0.55) transparent;
+    scrollbar-color: rgba(98, 145, 222, 0.55) transparent;
 }
 
 .manage-clips::-webkit-scrollbar { width: 8px; }
@@ -159,9 +159,9 @@
 .admin-panel select:focus,
 .manage-edit-row input:focus {
     outline: none;
-    border-color: #70A7EB;
+    border-color: #6291DE;
     background-color: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 0 0 4px rgba(112, 167, 235, 0.16);
+    box-shadow: 0 0 0 4px rgba(98, 145, 222, 0.16);
 }
 
 /* ---------- Buttons ---------- */
@@ -228,9 +228,9 @@
 }
 
 .admin-msg {
-    color: #B8DBFF;
-    background: rgba(39, 103, 206, 0.08);
-    border: 1px solid rgba(39, 103, 206, 0.2);
+    color: #B6CAEA;
+    background: rgba(32, 89, 180, 0.08);
+    border: 1px solid rgba(32, 89, 180, 0.2);
     border-radius: 10px;
     padding: 9px 12px;
     font-size: 0.85rem;
@@ -311,7 +311,7 @@
 }
 
 .admin-panel:hover {
-    border-color: rgba(112, 167, 235, 0.35);
+    border-color: rgba(98, 145, 222, 0.35);
     transform: translateY(-3px);
     box-shadow: 0 14px 36px rgba(3, 5, 20, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -364,7 +364,7 @@
 }
 
 .manage-reciter:hover {
-    border-color: rgba(39, 103, 206, 0.3);
+    border-color: rgba(32, 89, 180, 0.3);
     box-shadow: 0 10px 26px rgba(3, 5, 20, 0.4);
 }
 
@@ -391,7 +391,7 @@
 }
 
 .manage-name-btn:hover {
-    color: #B8DBFF;
+    color: #B6CAEA;
 }
 
 .manage-clip-count {
@@ -409,9 +409,9 @@
 .edit-btn, .save-btn {
     padding: 7px 16px;
     border-radius: 18px;
-    border: 1px solid rgba(39, 103, 206, 0.28);
-    background-color: rgba(39, 103, 206, 0.1);
-    color: #B8DBFF;
+    border: 1px solid rgba(32, 89, 180, 0.28);
+    background-color: rgba(32, 89, 180, 0.1);
+    color: #B6CAEA;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -550,7 +550,7 @@
 
 .admin-home-card:hover {
     transform: translateY(-6px) scale(1.015);
-    border-color: rgba(112, 167, 235, 0.4);
+    border-color: rgba(98, 145, 222, 0.4);
     box-shadow: 0 20px 46px rgba(3, 5, 20, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
