@@ -45,7 +45,7 @@
 
 .asmaa-card:hover {
     transform: translateY(-5px) scale(1.02);
-    border-color: rgba(0, 73, 230, 0.4);
+    border-color: rgba(106, 47, 200, 0.4);
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
 }
 
@@ -54,7 +54,7 @@
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--text-dim);
-    background: rgba(80, 131, 241, 0.12);
+    background: rgba(157, 113, 232, 0.12);
     padding: 2px 10px;
     border-radius: 10px;
 }
