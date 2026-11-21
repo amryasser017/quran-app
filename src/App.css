@@ -1,15 +1,15 @@
 :root {
-    --bg-black: #0B0720;
-    --bg-blue: #170B38;
-    --bg-purple: #25134D;
-    --surface: rgba(209, 184, 255, 0.055);
-    --surface-hover: rgba(209, 184, 255, 0.1);
-    --border: rgba(209, 184, 255, 0.14);
-    --accent-blue: #6A2FC8;
-    --accent-purple: #9D71E8;
-    --accent-teal: #D1B8FF;
-    --text: #F2E9FF;
-    --text-dim: #9A90B8;
+    --bg-black: #050C16;
+    --bg-blue: #0B1729;
+    --bg-purple: #10213C;
+    --surface: rgba(182, 202, 234, 0.055);
+    --surface-hover: rgba(182, 202, 234, 0.1);
+    --border: rgba(182, 202, 234, 0.14);
+    --accent-blue: #2059B4;
+    --accent-purple: #6291DE;
+    --accent-teal: #B6CAEA;
+    --text: #EBF6FF;
+    --text-dim: #90A4B8;
     --grad-primary: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 55%, var(--accent-teal) 100%);
     --shadow-elev: 0 8px 32px rgba(0, 0, 0, 0.55);
 }
@@ -42,9 +42,9 @@ body::before {
     z-index: 0;
     pointer-events: none;
     background-image:
-        radial-gradient(circle at 12% 12%, rgba(106, 47, 200, 0.16), transparent 42%),
-        radial-gradient(circle at 88% 10%, rgba(157, 113, 232, 0.16), transparent 42%),
-        radial-gradient(circle at 50% 96%, rgba(209, 184, 255, 0.11), transparent 48%);
+        radial-gradient(circle at 12% 12%, rgba(32, 89, 180, 0.16), transparent 42%),
+        radial-gradient(circle at 88% 10%, rgba(98, 145, 222, 0.16), transparent 42%),
+        radial-gradient(circle at 50% 96%, rgba(182, 202, 234, 0.11), transparent 48%);
     filter: blur(80px);
     animation: aurora-drift 26s ease-in-out infinite alternate;
 }
@@ -118,7 +118,7 @@ body::before {
     font-size: 1rem;
     font-family: inherit;
     text-align: right;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239A90B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2390A4B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 18px center;
     transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
@@ -130,9 +130,9 @@ body::before {
 
 .search-input:focus {
     outline: none;
-    border-color: rgba(157, 113, 232, 0.55);
+    border-color: rgba(98, 145, 222, 0.55);
     background-color: var(--surface-hover);
-    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.14);
+    box-shadow: 0 0 0 4px rgba(98, 145, 222, 0.14);
 }
 
 .back-link {
