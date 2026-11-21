@@ -6,17 +6,17 @@
 .admin-login,
 .admin-dashboard,
 .admin-home {
-    --admin-navy: #060818;
-    --admin-indigo: #150b3d;
-    --admin-violet: #241257;
-    --admin-glow-blue: rgba(96, 165, 250, 0.35);
-    --admin-glow-purple: rgba(192, 132, 252, 0.30);
-    --admin-glow-teal: rgba(45, 212, 191, 0.22);
-    --admin-glass: rgba(255, 255, 255, 0.055);
-    --admin-glass-hover: rgba(255, 255, 255, 0.09);
-    --admin-glass-border: rgba(255, 255, 255, 0.12);
-    --admin-shadow: 0 8px 32px rgba(3, 5, 20, 0.45);
-    --admin-grad: linear-gradient(135deg, #60a5fa 0%, #a78bfa 55%, #2dd4bf 100%);
+    --admin-navy: #0B0720;
+    --admin-indigo: #170B38;
+    --admin-violet: #25134D;
+    --admin-glow-blue: rgba(106, 47, 200, 0.35);
+    --admin-glow-purple: rgba(157, 113, 232, 0.30);
+    --admin-glow-teal: rgba(209, 184, 255, 0.22);
+    --admin-glass: rgba(209, 184, 255, 0.055);
+    --admin-glass-hover: rgba(209, 184, 255, 0.095);
+    --admin-glass-border: rgba(209, 184, 255, 0.14);
+    --admin-shadow: 0 8px 32px rgba(2, 1, 8, 0.5);
+    --admin-grad: linear-gradient(135deg, #6A2FC8 0%, #9D71E8 55%, #D1B8FF 100%);
 
     position: relative;
     isolation: isolate;
@@ -42,9 +42,9 @@
     z-index: 0;
     pointer-events: none;
     background-image:
-        radial-gradient(circle at 18% 22%, rgba(96, 165, 250, 0.20), transparent 42%),
-        radial-gradient(circle at 82% 18%, rgba(192, 132, 252, 0.18), transparent 42%),
-        radial-gradient(circle at 50% 92%, rgba(45, 212, 191, 0.14), transparent 46%);
+        radial-gradient(circle at 18% 22%, rgba(106, 47, 200, 0.20), transparent 42%),
+        radial-gradient(circle at 82% 18%, rgba(157, 113, 232, 0.18), transparent 42%),
+        radial-gradient(circle at 50% 92%, rgba(209, 184, 255, 0.14), transparent 46%);
     filter: blur(70px);
     animation: admin-aurora-drift 22s ease-in-out infinite alternate;
 }
@@ -73,7 +73,7 @@
 .admin-home,
 .manage-clips {
     scrollbar-width: thin;
-    scrollbar-color: rgba(167, 139, 250, 0.55) transparent;
+    scrollbar-color: rgba(157, 113, 232, 0.55) transparent;
 }
 
 .manage-clips::-webkit-scrollbar { width: 8px; }
@@ -142,7 +142,7 @@
 .admin-panel select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%23a78bfa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%239D71E8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     padding-right: 38px;
@@ -159,9 +159,9 @@
 .admin-panel select:focus,
 .manage-edit-row input:focus {
     outline: none;
-    border-color: #a78bfa;
+    border-color: #9D71E8;
     background-color: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.16);
+    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.16);
 }
 
 /* ---------- Buttons ---------- */
@@ -228,9 +228,9 @@
 }
 
 .admin-msg {
-    color: #93c5fd;
-    background: rgba(96, 165, 250, 0.08);
-    border: 1px solid rgba(96, 165, 250, 0.2);
+    color: #D1B8FF;
+    background: rgba(106, 47, 200, 0.08);
+    border: 1px solid rgba(106, 47, 200, 0.2);
     border-radius: 10px;
     padding: 9px 12px;
     font-size: 0.85rem;
@@ -311,7 +311,7 @@
 }
 
 .admin-panel:hover {
-    border-color: rgba(167, 139, 250, 0.35);
+    border-color: rgba(157, 113, 232, 0.35);
     transform: translateY(-3px);
     box-shadow: 0 14px 36px rgba(3, 5, 20, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -364,7 +364,7 @@
 }
 
 .manage-reciter:hover {
-    border-color: rgba(96, 165, 250, 0.3);
+    border-color: rgba(106, 47, 200, 0.3);
     box-shadow: 0 10px 26px rgba(3, 5, 20, 0.4);
 }
 
@@ -391,7 +391,7 @@
 }
 
 .manage-name-btn:hover {
-    color: #93c5fd;
+    color: #D1B8FF;
 }
 
 .manage-clip-count {
@@ -409,9 +409,9 @@
 .edit-btn, .save-btn {
     padding: 7px 16px;
     border-radius: 18px;
-    border: 1px solid rgba(96, 165, 250, 0.28);
-    background-color: rgba(96, 165, 250, 0.1);
-    color: #93c5fd;
+    border: 1px solid rgba(106, 47, 200, 0.28);
+    background-color: rgba(106, 47, 200, 0.1);
+    color: #D1B8FF;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -550,7 +550,7 @@
 
 .admin-home-card:hover {
     transform: translateY(-6px) scale(1.015);
-    border-color: rgba(167, 139, 250, 0.4);
+    border-color: rgba(157, 113, 232, 0.4);
     box-shadow: 0 20px 46px rgba(3, 5, 20, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 

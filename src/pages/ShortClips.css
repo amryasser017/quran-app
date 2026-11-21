@@ -34,7 +34,7 @@
     inset: -50% -50% auto auto;
     width: 70%;
     height: 70%;
-    background: radial-gradient(circle, rgba(96, 165, 250, 0.35), transparent 70%);
+    background: radial-gradient(circle, rgba(106, 47, 200, 0.35), transparent 70%);
     opacity: 0;
     border-radius: 50%;
     transition: opacity 0.3s ease;
@@ -44,7 +44,7 @@
 .reciter-card:hover {
     transform: translateY(-5px) scale(1.03);
     box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    border-color: rgba(96, 165, 250, 0.4);
+    border-color: rgba(106, 47, 200, 0.4);
 }
 
 .reciter-card:hover::before {
@@ -102,14 +102,14 @@
 
 .surah-card:hover {
     transform: translateY(-3px) scale(1.02);
-    border-color: rgba(96, 165, 250, 0.4);
+    border-color: rgba(106, 47, 200, 0.4);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .surah-card.playing {
-    background: rgba(167, 139, 250, 0.1);
-    border: 1px solid rgba(167, 139, 250, 0.55);
-    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
+    background: rgba(157, 113, 232, 0.1);
+    border: 1px solid rgba(157, 113, 232, 0.55);
+    box-shadow: 0 0 0 4px rgba(157, 113, 232, 0.12), 0 14px 32px rgba(0, 0, 0, 0.5);
 }
 
 .surah-name {
